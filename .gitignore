@@ -1,3 +1,6 @@
+# Matlab files
+*.mat
+
 # Windows default autosave extension
 *.asv
 

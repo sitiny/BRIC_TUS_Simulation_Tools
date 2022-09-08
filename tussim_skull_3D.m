@@ -517,6 +517,24 @@ xlabel(cb2, '[MPa]');
 title(ax1,'Acoustic Pressure Amplitude')
 saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_ax.jpg']));
 
+%%% Save pressure field and -6dB volume as nifti file
+p_out = zeros(size(input_ct),'double');
+p_out(idx1(1,1):idx1(1,2), idx1(2,1):idx1(2,2), idx1(3,1):idx1(3,2)) = ...
+    p(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2));
+
+header.Filename=[]; header.Filemoddate=[]; header.Filesize=[]; header.raw=[];
+header.Datatype='double'; header.BitsPerPixel=32; 
+niftiwrite(p_out, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_pressurefield.nii']), header);
+
+tmp_focusbin = p > 0.5*max_pressure;
+tmp_focusbin = int16(tmp_focusbin);
+focal_vol_bin = zeros(size(input_ct),'int16');
+focal_vol_bin(idx1(1,1):idx1(1,2), idx1(2,1):idx1(2,2), idx1(3,1):idx1(3,2)) = ...
+    tmp_focusbin(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2));
+clear tmp_focusbin;
+header.Datatype='int16'; header.BitsPerPixel=16;
+niftiwrite(focal_vol_bin, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_-6dBvolume.nii']), header);
+
 %% Thermal Simulation
 if ~run_thermal_sim
    return 

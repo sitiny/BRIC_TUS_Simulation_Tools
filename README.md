@@ -71,10 +71,10 @@ The plots, a .csv file and a .mat file containing the simulation output will be 
 
 Please see function help for optional input arguments (e.g. to run thermal simulation).
 
-To use your own data with these scripts, please see "Required input" section below.
+To use your own data with these scripts, please see "Preparing input files" section below.
 
 
-### Required input
+### Preparing input files
 Currently, the transcranial simulation function only supports input images with 1 mm isotropic voxels and the output is based on a free-field simulation at 20 W/cm<sup>2</sup> using the CTX-500 transducer. 
 
 You can provide your own source magnitude and transducer element phase information using the optional input.
@@ -83,18 +83,18 @@ You will need to supply a co-registered T1-weighted MR image and CT (or pseudo-C
 
 It is preferable that you provide a T1-weighted MR image that has had noise outside the head masked out (e.g. the one used for pseudo-CT generation), so that the sensor is set to within this head mask. Otherwise, it will set the sensor to all voxels with intensity > 0 in the T1-weighted MR image. Alternatively, you can also use a brain extracted T1-weighted MRI, but this means you will not be able to simulate temperature rise at the skull interface when running the thermal simulation.
 
-## Publication
+## Citing this work
 
 The simulations as implemented in these functions are described in the following paper.
 
 >    Siti N. Yaakub, Tristan White, Eric Kerfoot, Lennart Verhagen, Alexander Hammers, Elsa Fouragnan. Pseudo-CTs from T1-weighted MRI for planning of low-intensity transcranial focused ultrasound neuromodulation. (in preparation)
 
-The simulations use the k-Wave Toolbox and kArray tools developed by Bradley Treeby and Ben Cox (University College London) and Jiri Jaros (Brno University of Technology). k-Wave and kArray tools can be downloaded for free from http://www.k-wave.org (see also Dependencies section) and described in the following papers. 
-
 The simulation functions use the k-Wave Toolbox and kArray tools developed by Bradley Treeby and Ben Cox (University College London) and Jiri Jaros (Brno University of Technology). k-Wave and kArray tools can be downloaded for free from http://www.k-wave.org (see also Dependencies section) and described in the following papers. 
 
 > B. E. Treeby and B. T. Cox, "k-Wave: MATLAB toolbox for the simulation and reconstruction of photoacoustic wave-fields," J. Biomed. Opt., vol. 15, no. 2, p. 021314, 2010.
+>
 > B. E. Treeby, J. Jaros, A. P. Rendell, and B. T. Cox, "Modeling nonlinear ultrasound propagation in heterogeneous media with power law absorption using a k-space pseudospectral method," J. Acoust. Soc. Am., vol. 131, no. 6, pp. 4324-4336, 2012.
+>
 > E. S. Wise, B. T. Cox, J. Jaros, B. E. Treeby, "Representing arbitrary acoustic source and sensor distributions in Fourier collocation methods," J. Acoust. Soc. Am., 146 (1), pp. 278-288, 2019.
 
 If you use the functions in your own work, please consider citing the above paper and the k-Wave toolbox.

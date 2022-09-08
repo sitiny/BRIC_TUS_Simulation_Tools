@@ -597,19 +597,68 @@ for nb = 1:num_bursts
     T2 = kdiff.T;
 end
 
-disp(['Max temperature rise = ' num2str(max(maxT1(:))-source2.T0) ' °C'])
+[max_temp, idx_temp] = max(maxT1(:));
+disp(['Max temperature rise = ' num2str(max_temp-source2.T0) ' °C'])
 disp(['End max. temperature = ' num2str(max(T2(:))) ' °C'])
 save(fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_thermalsim.mat']));
 
 %%% Create thermal plots
-% [max_temp, idx_temp] = max(T1(:));
-% [tx, ty, tz] = ind2sub(size(T1), idx_temp); % plot at max T coords
+[tx, ty, tz] = ind2sub(size(maxT1), idx_temp); % plot at max T coords
 
-% plot the thermal dose and lesion map
+% plot the temperature maps at max temperature
+figure;
+ax1 = axes;
+imagesc(ax1, imrotate(squeeze(t1_img(tx,:,:)),90), [50,500]);
+hold all;
+ax2 = axes;
+im2 = imagesc(ax2, imrotate(squeeze(maxT1(tx,:,:)),90));
+im2.AlphaData = 0.5;
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+colormap(ax1,'gray')
+colormap(ax2,'turbo')
+set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
+xlabel(cb2, '°C');
+title(ax1,'Max. temperature')
+saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_therm_sag.jpg']));
+
+figure;
+ax1 = axes;
+imagesc(ax1, imrotate(squeeze(t1_img(:,ty,:)),90), [50,500]);
+hold all;
+ax2 = axes;
+im2 = imagesc(ax2, imrotate(squeeze(maxT1(:,ty,:)),90));
+im2.AlphaData = 0.5;
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+colormap(ax1,'gray')
+colormap(ax2,'turbo')
+set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
+xlabel(cb2, '°C');
+title(ax1,'Max. temperature')
+saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_therm_cor.jpg']));
+
+figure;
+ax1 = axes;
+imagesc(ax1, imrotate(squeeze(t1_img(:,:,tz)),90), [50,500]);
+hold all;
+ax2 = axes;
+im2 = imagesc(ax2, imrotate(squeeze(maxT1(:,:,tz)),90));
+im2.AlphaData = 0.5;
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+colormap(ax1,'gray')
+colormap(ax2,'turbo')
+set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
+xlabel(cb2, '°C');
+title(ax1,'Max. temperature')
+saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_therm_ax.jpg']));
+
+% plot at max pressure
 figure;
 % plot the volume rate of heat deposition (yz)
 subplot(3, 2, 1);
-imagesc(kgrid.y_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(Q(mx,:,:)*1e-7),90));
+imagesc(kgrid.y_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(Q(tx,:,:)*1e-7),90));
 h = colorbar;
 xlabel(h, '[kW/cm^2]');
 ylabel('z-position [mm]');
@@ -619,7 +668,7 @@ title('Volume Rate Of Heat Deposition');
 
 % plot the maximum temperature (yz)
 subplot(3, 2, 2);
-imagesc(kgrid.y_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(maxT1(mx,:,:)),90));
+imagesc(kgrid.y_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(maxT1(tx,:,:)),90));
 h = colorbar;
 xlabel(h, '[°C]');
 ylabel('z-position [mm]');
@@ -629,7 +678,7 @@ title('Max. Temperature');
 
 % plot the volume rate of heat deposition (xz)
 subplot(3, 2, 3);
-imagesc(kgrid.x_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(Q(:,my,:)*1e-7),90));
+imagesc(kgrid.x_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(Q(:,ty,:)*1e-7),90));
 h = colorbar;
 xlabel(h, '[kW/cm^2]');
 ylabel('z-position [mm]');
@@ -639,7 +688,7 @@ title('Volume Rate Of Heat Deposition');
 
 % plot the temperature after heating (xz)
 subplot(3, 2, 4);
-imagesc(kgrid.x_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(maxT1(:,my,:)),90));
+imagesc(kgrid.x_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(maxT1(:,ty,:)),90));
 h = colorbar;
 xlabel(h, '[°C]');
 ylabel('z-position [mm]');
@@ -649,7 +698,7 @@ title('Max. Temperature After Heating');
 
 % plot the volume rate of heat deposition (xy)
 subplot(3, 2, 5);
-imagesc(kgrid.x_vec*1e3, kgrid.y_vec*1e3, imrotate(Q(:,:,mz)*1e-7,90));
+imagesc(kgrid.x_vec*1e3, kgrid.y_vec*1e3, imrotate(Q(:,:,tz)*1e-7,90));
 h = colorbar;
 xlabel(h, '[kW/cm^2]');
 ylabel('y-position [mm]');
@@ -659,7 +708,7 @@ title('Volume Rate Of Heat Deposition');
 
 % plot the temperature after heating (xy)
 subplot(3, 2, 6);
-imagesc(kgrid.x_vec*1e3, kgrid.y_vec*1e3, imrotate(maxT1(:,:,mz),90));
+imagesc(kgrid.x_vec*1e3, kgrid.y_vec*1e3, imrotate(maxT1(:,:,tz),90));
 h = colorbar;
 xlabel(h, '[°C]');
 ylabel('y-position [mm]');

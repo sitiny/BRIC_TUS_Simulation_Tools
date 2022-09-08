@@ -2,8 +2,7 @@
 
 MATLAB scripts for running TUS acoustic simulations using T1-weighted MR and pseudo-CT images acquired at the Brain Research & Imaging Centre, University of Plymouth.
 
-Currently, the simulations work for the NeuroFUS PRO CTX-500 and CTX-250 4-element transducers (https://brainbox-neuro.com/products/neurofus) only. 
-
+Currently, the simulation functions work for the NeuroFUS PRO CTX-500 and CTX-250 4-element transducers (https://brainbox-neuro.com/products/neurofus) only. The transcranial simulation function only supports input images with 1 mm isotropic voxels and the simulated pressure field is based on a free-field simulation at 20 W/cm<sup>2</sup> using the CTX-500 transducer. 
 
 ## Publication
 
@@ -19,7 +18,7 @@ If you use the simulation scripts in your own work, please acknowledge the scrip
 
 ## Platform
 
-Tested on macOS Catalina (10.15.7) and Windows (?). 
+Tested on macOS Catalina (10.15.7), Windows (?) and Linux (?).
 
 
 ## Dependencies
@@ -74,7 +73,7 @@ Run the function again with the acoustic simulation flag turned on:
 `tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer, 'RunAcousticSim', true)`
 
 This will produce plots of the simulated acoustic pressure field in each plane. The function will also display simulation parameters along with the coordinates of maximum pressure, distance from the rear surface of the transducer [mm], maximum pressure [MPa], mechanical index (MI), I<sub>SPPA</sub> [W/cm<sup>2</sup>], I<sub>SPTA</sub> [mW/cm<sup>2</sup>], pressure at intended focus [MPa], I<sub>SPPA</sub> at intended focus [W/cm<sup>2</sup>], and -6dB focal volume [mm<sup>3</sup>].
-The plots and a .mat file containing the simulation variables will be saved in the `output_dir`.
+The plots, a .csv file and a .mat file containing the simulation output will be saved in the `output_dir`.
 
 Please see function help for optional input arguments (e.g. to run thermal simulation).
 

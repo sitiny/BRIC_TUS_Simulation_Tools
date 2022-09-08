@@ -71,7 +71,6 @@ source_amp = repmat(pressure, [1,4]); % source pressure [Pa]
 source_phase = deg2rad(phase); % phase [rad]
 
 % source parameters
-freq = freq*1e3; % source frequency [Hz]
 bx = 10; fx = 54;
 
 % medium parameters

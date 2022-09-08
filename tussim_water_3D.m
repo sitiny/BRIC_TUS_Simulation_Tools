@@ -29,7 +29,7 @@ function tussim_water_3D(transducer, pressure, phase, varargin)
 %   kArray (http://www.k-wave.org/downloads/kWaveArray_alpha_0.3.zip)
 %     	Copyright (C) 2009-2017 Bradley Treeby
 % 
-% Author: Siti N. Yaakub, 7-Sep-2022
+% Author: Siti N. Yaakub, University of Plymouth, 7 Sep 2022
 arguments
     transducer char
     pressure (1,1) {mustBeNumeric}

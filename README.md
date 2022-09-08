@@ -1,19 +1,8 @@
-# BRIC_TUS_Simulations
+# BRIC TUS Simulation Tools
 
-MATLAB scripts for running TUS acoustic simulations using T1-weighted MR and pseudo-CT images acquired at the Brain Research & Imaging Centre, University of Plymouth.
+MATLAB-based functions for running TUS acoustic simulations using T1-weighted MR and pseudo-CT images acquired at the Brain Research & Imaging Centre, University of Plymouth.
 
 Currently, the simulation functions work for the NeuroFUS PRO CTX-500 and CTX-250 4-element transducers (https://brainbox-neuro.com/products/neurofus) only. The transcranial simulation function only supports input images with 1 mm isotropic voxels and the simulated pressure field is based on a free-field simulation at 20 W/cm<sup>2</sup> using the CTX-500 transducer. 
-
-## Publication
-
-The simulations as implemented in these scripts are described in the following paper.
-
->    Yaakub, S. N., White, T., Kerfoot, E., Verhagen, L., Hammers, A., Fouragnan, E.
->    Pseudo-CTs from T1-weighted MRI for planning of low-intensity transcranial focused ultrasound neuromodulation. (in preparation)
-
-The simulations use the k-Wave Toolbox and kArray tools developed by Bradley Treeby and Ben Cox (University College London) and Jiri Jaros (Brno University of Technology). k-Wave and kArray tools can be downloaded for free from http://www.k-wave.org (see also Dependencies section).
-
-If you use the simulation scripts in your own work, please acknowledge the scripts by citing the above paper **and the k-Wave toolbox**.
 
 
 ## Platform
@@ -29,22 +18,27 @@ Tested on macOS Catalina (10.15.7), Windows (?) and Linux (?).
 
 ## Instructions
 
-Clone or download scripts and add them to your MATLAB path. Add k-Wave and kArray tools to your MATLAB path.
+Clone or download functions and utils and add them and the k-Wave and kArray tools to your MATLAB path.
 
 ### Free-field acoustic simulations
 To run free-field acoustic simulations, run the following in MATLAB:
 ```
+transducer = 'CTX500';
+pressure = 51590;
+phase = [0,319,278,237];
 tussim_water_3D(transducer, pressure, phase)
 ```
-#### Parameters:
+#### Input parameters:
 * `transducer`: CTX transducer type. This will determine the transducer central frequency and dimensions. Options are 'CTX500' or 'CTX250'.
 * `pressure`: Source pressure applied by transducer in Pa.
 * `phase`: 4-element array of phases of each transducer element in degrees for the focal depth required.
 
-This will produce plots of the simulated acoustic pressure field and display the maximum pressure [MPa], mechanical index (MI), distance from the rear surface of the transducer [mm], I<sub>SPPA</sub> [W/cm<sup>2</sup>], and I<sub>SPTA</sub> [mW/cm<sup>2</sup>].
+This function will run the free-field (i.e. through water) acoustic simulation for the input parameters you provide. The function will produce plots of the simulated acoustic pressure field and display the maximum pressure [MPa], mechanical index (MI), distance from the rear surface of the transducer [mm], I<sub>SPPA</sub> [W/cm<sup>2</sup>], and I<sub>SPTA</sub> [mW/cm<sup>2</sup>]. 
+
+You will need to know the pressure and phases of each element of the transducer. The phase of each element can be obtained from the NeuroFUS PRO Transducer Power Output (TPO) unit. The pressure will determine the free-field I<sub>SPPA</sub> for the simulation. Values for a focal depth of 62 mm are given in the example above.
 
 ### Transcranial acoustic simulations
-To run transcranial acoustic simulations on the example dataset, download the example dataset to the desired folder on your computer, then run the following in MATLAB, replacing `filepath` with the path to the folder where you saved the example data:
+To run transcranial acoustic simulations on the example dataset provided, download the example dataset to the desired folder on your computer, then run the following in MATLAB, replacing `filepath` with the path to the folder where you saved the example data:
 ```
 subj_id = 'sub-test01';
 t1_filename = fullfile(filepath, 'sub-test01_t1w.nii');
@@ -89,6 +83,21 @@ You will need to supply a co-registered T1-weighted MR image and CT (or pseudo-C
 
 It is preferable that you provide a T1-weighted MR image that has had noise outside the head masked out (e.g. the one used for pseudo-CT generation), so that the sensor is set to within this head mask. Otherwise, it will set the sensor to all voxels with intensity > 0 in the T1-weighted MR image. Alternatively, you can also use a brain extracted T1-weighted MRI, but this means you will not be able to simulate temperature rise at the skull interface when running the thermal simulation.
 
+## Publication
+
+The simulations as implemented in these functions are described in the following paper.
+
+>    Siti N. Yaakub, Tristan White, Eric Kerfoot, Lennart Verhagen, Alexander Hammers, Elsa Fouragnan. Pseudo-CTs from T1-weighted MRI for planning of low-intensity transcranial focused ultrasound neuromodulation. (in preparation)
+
+The simulations use the k-Wave Toolbox and kArray tools developed by Bradley Treeby and Ben Cox (University College London) and Jiri Jaros (Brno University of Technology). k-Wave and kArray tools can be downloaded for free from http://www.k-wave.org (see also Dependencies section) and described in the following papers. 
+
+The simulation functions use the k-Wave Toolbox and kArray tools developed by Bradley Treeby and Ben Cox (University College London) and Jiri Jaros (Brno University of Technology). k-Wave and kArray tools can be downloaded for free from http://www.k-wave.org (see also Dependencies section) and described in the following papers. 
+
+> B. E. Treeby and B. T. Cox, "k-Wave: MATLAB toolbox for the simulation and reconstruction of photoacoustic wave-fields," J. Biomed. Opt., vol. 15, no. 2, p. 021314, 2010.
+> B. E. Treeby, J. Jaros, A. P. Rendell, and B. T. Cox, "Modeling nonlinear ultrasound propagation in heterogeneous media with power law absorption using a k-space pseudospectral method," J. Acoust. Soc. Am., vol. 131, no. 6, pp. 4324-4336, 2012.
+> E. S. Wise, B. T. Cox, J. Jaros, B. E. Treeby, "Representing arbitrary acoustic source and sensor distributions in Fourier collocation methods," J. Acoust. Soc. Am., 146 (1), pp. 278-288, 2019.
+
+If you use the functions in your own work, please consider citing the above paper and the k-Wave toolbox.
 
 ## Questions/feedback
 Feedback welcome at siti.yaakub@plymouth.ac.uk

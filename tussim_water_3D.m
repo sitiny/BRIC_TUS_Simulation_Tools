@@ -29,7 +29,7 @@ function tussim_water_3D(transducer, pressure, phase, varargin)
 %   kArray (http://www.k-wave.org/downloads/kWaveArray_alpha_0.3.zip)
 %     	Copyright (C) 2009-2017 Bradley Treeby
 % 
-% Author: Siti N. Yaakub 
+% Author: Siti N. Yaakub, 7-Sep-2022
 arguments
     transducer char
     pressure (1,1) {mustBeNumeric}
@@ -40,7 +40,7 @@ arguments (Repeating)
 end
 
 % defaults
-run_thermal = false;
+run_thermal_sim = false;
 pulse_length = 20e-3;	% pulse length [s]
 pulse_rep_freq = 5;     % pulse repetition frequency [Hz]
 stim_dur = 80;
@@ -50,7 +50,7 @@ if ~isempty(varargin)
     for arg_idx = 1:2:length(varargin)
         switch varargin{arg_idx}
             case 'RunThermalSim'
-                run_thermal = varargin{arg_idx+1};
+                run_thermal_sim = varargin{arg_idx+1};
             case 'PulseLength'
                 pulse_length = varargin{arg_idx+1};
             case 'PulseRepFreq'
@@ -206,7 +206,7 @@ disp(['Isppa = ' num2str(Isppa) ' W/cm2'])
 disp(['Ispta = ' num2str(Ispta*1e3) ' mW/cm2'])
 
 %% Run thermal simulation
-if ~run_thermal
+if ~run_thermal_sim
    return 
 end
 

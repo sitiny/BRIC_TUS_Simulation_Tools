@@ -50,8 +50,7 @@ focus_depth = 60;
 transducer = 'CTX500';
 tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer)
 ```
-
-#### Parameters:
+**Parameters:**
 * `subj_id`: ID of the subject you are running the simulation for.
 * `t1_filename`: Full file path to the T1-weighted MR image.
 * `ct_filename`: Full file path to the CT (or pseudo-CT) image.

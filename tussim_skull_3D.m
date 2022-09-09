@@ -2,36 +2,36 @@ function tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, ...
     focus_coords, bowl_coords, focus_depth, transducer, varargin)
 %TUSSIM_SKULL_3D Run 3D k-wave acoustic simulation transcranially with skull
 %   estimated using CT (or pseudo-CT) images.
-% 
+%
 % The simulation grid is 256x256x256, with voxel size of 1x1x1mm^3. The
 % driving parameters are only valid for the CTX-500 with free-field Isppa
 % of 20 W/cm^2. If you would like the simulation for a different free-field
 % Isppa or a different transducer, you will have to provide your own source
 % pressure and phase as optional Name-Value paired input arguments.
-% 
-% You will need to supply a co-registered T1-weighted MR image and CT (or 
+%
+% You will need to supply a co-registered T1-weighted MR image and CT (or
 % pseudo-CT) image for use in the simulations. These images must have voxel
 % sizes of 1x1x1mm^3. The matrix size can be any size and will be
-% automatically adjusted in the script to allow space for placing your 
+% automatically adjusted in the script to allow space for placing your
 % transducer within the grid.
-% 
-% It is preferable that you provide a T1-weighted MRI that has had noise 
-% outside the head masked out (e.g. the one used for pseudo-CT generation) 
-% so that the sensor is set to within this head mask. Alternatively, you 
+%
+% It is preferable that you provide a T1-weighted MRI that has had noise
+% outside the head masked out (e.g. the one used for pseudo-CT generation)
+% so that the sensor is set to within this head mask. Alternatively, you
 % can provide a brain extracted T1-weighted MRI instead, but this means you
 % will not be able to simulate temperature rise at the skull interface when
 % running the thermal simulation.
-% 
+%
 % Running the script without the acoustic or thermal simulation allows you
-% to check that the transducer position relative to the head is correct. 
-% If you are satisfied, re-run the script with the option: 
+% to check that the transducer position relative to the head is correct.
+% If you are satisfied, re-run the script with the option:
 % 'RunAcousticSim', true.
-% 
+%
 % Currently, there is no functionality to run only a thermal simulation
-% without running the acoustic simulation. Alternatively you can load the 
+% without running the acoustic simulation. Alternatively you can load the
 % saved acoustic simulation .mat file and run the thermal simulation cells.
-% 
-% Usage: 
+%
+% Usage:
 %   tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, ...
 %       focus_coords, bowl_coords, focus_depth, transducer)
 %   tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, ...
@@ -40,43 +40,45 @@ function tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, ...
 %       'sub-test01_pct.nii', 'output_dir', ...
 %       [99, 161, 202], [90, 193, 262], 60, ...
 %       'CTX500', 'RunAcousticSim', true);
-% 
+%
 % Inputs:
 %   subj_id:        ID of the subject you are running the simulation for.
 %   t1_filename:    Full file path to the T1-weighted MR image.
 %   ct_filename:    Full file path to the CT (or pseudo-CT) image.
 %   output_dir:     Full path to the output directory.
 %   focus_coords:   3-element array of voxel coordinates of the desired TUS
-%                   focus. Add 1 if reading these off a viewer that uses 
+%                   focus. Add 1 if reading these off a viewer that uses
 %                   zero-indexing (MATLAB indexing starts from 1).
-%   bowl_coords:    3-element array of voxel coordinates of the centre of 
-%                   the transducer base. Add 1 if reading these off a 
+%   bowl_coords:    3-element array of voxel coordinates of the centre of
+%                   the transducer base. Add 1 if reading these off a
 %                   viewer that uses zero-indexing.
-%   focus_depth:    Distance from transducer face to intended focus in mm, 
+%   focus_depth:    Distance from transducer face to intended focus in mm,
 %                   rounded to the nearest integer.
 %   transducer:     Options are 'CTX500', 'CTX560' or 'CTX250'.
-%                 
+%
 % Optional Name-Value pair inputs:
 %   'RunAcousticSim':   Boolean controlling whether to run acoustic
 %                       simulation (default: false).
-%   'RunThermalSim':    Boolean controlling whether to run thermal 
+%   'RunThermalSim':    Boolean controlling whether to run thermal
 %                       simulation(default: false).
 %   'PulseLength':      Pulse length in s (default: 20e-3 s).
 %   'PulseRepFreq':     Pulse repetition frequency in Hz (default: 5 Hz).
 %   'StimDuration':     Duration of TUS in s (default: 80 s).
 %   'SourcePressure':   Source pressure in Pa.
-%   'SourcePhase':      4-element array of phases of each transducer 
+%   'SourcePhase':      4-element array of phases of each transducer
 %                       element in degrees for the focal depth required.
-% 
-% WARNING: Default acoustic values in function are for 500 kHz transducers. 
-% Please set your own values if using a transducer with a central frequency 
+%   'RunCppCode':       Where to run the C++ simulation code (default: 'matlab')
+%                       Options are 'matlab', 'terminal', 'linux_system'
+%
+% WARNING: Default acoustic values in function are for 500 kHz transducers.
+% Please set your own values if using a transducer with a central frequency
 % other than 500kHz.
-% 
+%
 % Dependencies:
 %   k-Wave Toolbox (http://www.k-wave.org)
 %   kArray (http://www.k-wave.org/downloads/kWaveArray_alpha_0.3.zip)
 %     	Copyright (C) 2009-2017 Bradley Treeby
-% 
+%
 % Author: Siti N. Yaakub, University of Plymouth, 7 Sep 2022
 arguments
     subj_id char
@@ -98,6 +100,7 @@ run_thermal_sim = false;
 pulse_length = 20e-3;	% pulse length [s]
 pulse_rep_freq = 5;     % pulse repetition frequency [Hz]
 stim_dur = 80;
+run_cpp = 'matlab';
 
 % specify transducer
 [source_roc,diameters,freq] = get_transducer_specs(transducer);
@@ -121,6 +124,8 @@ if ~isempty(varargin)
                 pressure = varargin{arg_idx+1};
             case 'SourcePhase'
                 phase = varargin{arg_idx+1};
+            case 'RunCppCode'
+                run_cpp = varargin{arg_idx+1};
             otherwise
                 error('Unknown optional input.');
         end
@@ -137,7 +142,7 @@ rho_min             = 1000;     % density [kg/m^3]
 rho_max             = 1900;     % max. skull density [kg/m3]
 alpha_power         = 1.43;     % Robertson et al., PMB 2017 usually between 1 and 3? from Treeby paper
 alpha_coeff_water   = 0;        % [dB/(MHz^y cm)] 0.05 from Fomenko et al., 2020?
-alpha_coeff_min     = 4;        % 
+alpha_coeff_min     = 4;        %
 alpha_coeff_max     = 8.7;      % [dB/(MHz cm)] Fry 1978 at 0.5MHz: 1 Np/cm (8.7 dB/cm) for both diploe and outer tables
 
 % computational parameters
@@ -219,7 +224,7 @@ for ii = 1:3
     end
 end
 
-new_t1(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2)) = ... 
+new_t1(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2)) = ...
     t1_img(idx1(1,1):idx1(1,2), idx1(2,1):idx1(2,2), idx1(3,1):idx1(3,2));
 t1_img = new_t1;
 clear new_t1;
@@ -227,9 +232,9 @@ clear new_t1;
 %%% Medium properties
 % assign medium properties for skull
 % derived from CT HU based on Marsac et al., 2017 & Bancel et al., 2021
-medium.density = rho_min + (rho_max - rho_min) * ... 
+medium.density = rho_min + (rho_max - rho_min) * ...
                 (model - 0) / (hu_max - 0);
-medium.sound_speed = c_min + (c_max - c_min) * ... 
+medium.sound_speed = c_min + (c_max - c_min) * ...
                     (medium.density - rho_min) / (rho_max - rho_min);
 medium.alpha_coeff = alpha_coeff_min + (alpha_coeff_max - alpha_coeff_min) * ...
                     (1 - (model - hu_min) / (hu_max - hu_min)).^0.5;
@@ -266,7 +271,7 @@ if dt_stability_limit ~= Inf
 end
 
 % calculate the number of time steps to reach steady state
-t_end = sqrt(kgrid.x_size.^2 + kgrid.y_size.^2) / c_min; 
+t_end = sqrt(kgrid.x_size.^2 + kgrid.y_size.^2) / c_min;
 
 % create the time array using an integer number of points per period
 Nt = round(t_end / dt);
@@ -340,8 +345,46 @@ sensor.record_start_index = kgrid.Nt - record_periods * ppp + 1;
 input_args = {'PMLSize', 10, 'PMLInside', true, 'PlotPML', true, ...
     'DisplayMask', source.p_mask};
 
-% run C++ in Matlab
-sensor_data = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
+switch run_cpp
+    case 'matlab'
+        % run C++ in Matlab
+        sensor_data = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
+    case 'terminal'
+        % run C++ in terminal
+        % input and output filenames (these must have the .h5 extension)
+        input_filename  = fullfile(output_dir, ['kwave_input_' subj_id '.h5']);
+        output_filename = fullfile(output_dir, ['kwave_output_' subj_id '.h5']);
+        sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:}, 'SaveToDisk', input_filename);
+        % display the required syntax to run the C++ simulation
+        disp(['Using a terminal window, navigate to the ' filesep 'binaries folder of the k-Wave Toolbox']);
+        disp('Then, use the syntax shown below to run the simulation:');
+        disp(['./kspaceFirstOrder-OMP -i ' input_filename ' -o ' output_filename ' --p_raw -s ' num2str(sensor.record_start_index)]);
+        return
+    case 'linux_system'
+        % run C++ using system commands from matlab
+        % define names of temporary input and output files
+        input_filename = fullfile(output_dir, ['kwave_input_' subj_id '.h5']);
+        output_filename = fullfile(output_dir, ['kwave_output_' subj_id '.h5']);
+        
+        % create input file
+        sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:}, 'SaveToDisk', input_filename);
+        
+        % run simulation using bash commands
+        kspacefct_path = fullfile(fileparts(which('kspaceFirstOrder3D')), ...
+            'binaries', 'kspaceFirstOrder-OMP');
+        [status, simul_output] = system([kspacefct_path ' -i ' input_filename ...
+            ' -o ' output_filename ' --p_raw -s ' num2str(sensor.record_start_index) '-t 12'], '-echo'); %#ok<ASGLU> 
+
+        if status
+            error('simulation failed');
+        end
+        
+        % re-input results into matlab
+        sensor_data.p = h5read(output_filename, '/p');
+    
+        % delete temporary input and output files
+        delete input_filename output_filename
+end
 
 %%% Calculate pressure
 % extract amplitude from the sensor data
@@ -384,13 +427,13 @@ if norm(bowl_coords-[mx,my,mz])*dx*1e3 < focus_depth
         'It is likely that the maximum pressure is found at the skull interface. ' ...
         'Attempting to adjust search to pressure recorded within the brain only... ' ...
         'Please check output!'])
-    
+
     zz = mz-10;
     tmp=p(:,:,1:zz);
-    
+
     [max_pressure, idx] = max(tmp(:)); % [Pa]
     [mx, my, mz] = ind2sub(size(tmp), idx);
-    
+
     if model(mx, my, mz) > 1
         Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))); % [W/m2]
     elseif model(mx, my, mz) == 0
@@ -398,10 +441,10 @@ if norm(bowl_coords-[mx,my,mz])*dx*1e3 < focus_depth
     end
     Isppa = Isppa * 1e-4; % [W/cm2]
     Ispta = Isppa * pulse_length * pulse_rep_freq; % [W/cm2]
-    
+
     % MI = max_pressure (in MPa) / sqrt freq (in MHz)
     MI = max_pressure * 1e-6 / sqrt(freq * 1e-6);
-    
+
     % find -6dB focal volume
     focal_vol = length(find(tmp > 0.5*max(tmp(:))));
 end
@@ -432,7 +475,7 @@ save(fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '.mat']));
 % create result file if it does not exist and write header
 if ~exist(fullfile(output_dir, 'simulation_results.csv'), 'file')
  disp('Result file does not exist, creating file.')
- fileID = fopen(fullfile(output_dir, 'simulation_results.csv'), 'w' );  
+ fileID = fopen(fullfile(output_dir, 'simulation_results.csv'), 'w' );
  fprintf(fileID, '%s\n', ...
     ['id, Focus coordinates, Transducer base coordinates, Focus depth, ' ...
     'PPW, CFL, Coordinates of max pressure, Distance from transducer rear surface (mm), ' ...
@@ -440,7 +483,7 @@ if ~exist(fullfile(output_dir, 'simulation_results.csv'), 'file')
     'Pressure at focus (MPa), Isppa at focus (W/cm2), ' ...
     '-6dB focal volume (mm3), -6dB max width (mm)']);
  fclose(fileID);
-end 
+end
 
 % write values
 fileID = fopen(fullfile(output_dir, 'simulation_results.csv'),'a');
@@ -460,10 +503,10 @@ hold all;
 ax2 = axes;
 im2 = imagesc(ax2, imrotate(squeeze(p(mx,:,:))*1e-6,90));
 im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
 colormap(ax1,'gray')
 colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+set([ax1,ax2],'Position',[.17 .11 .685 .815]);
 cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
 xlabel(cb2, '[MPa]');
 title(ax1,'Acoustic Pressure Amplitude')
@@ -476,10 +519,10 @@ hold all;
 ax2 = axes;
 im2 = imagesc(ax2, imrotate(squeeze(p(mx,:,:)>(0.5*max_pressure))*1e-6,90));
 im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
 colormap(ax1,'gray')
 colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+set([ax1,ax2],'Position',[.17 .11 .685 .815]);
 cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
 xlabel(cb2, '[MPa]');
 title(ax1,'50% Acoustic Pressure Amplitude')
@@ -492,10 +535,10 @@ hold all;
 ax2 = axes;
 im2 = imagesc(ax2, imrotate(squeeze(p(:,my,:))*1e-6,90));
 im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
 colormap(ax1,'gray')
 colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+set([ax1,ax2],'Position',[.17 .11 .685 .815]);
 cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
 xlabel(cb2, '[MPa]');
 title(ax1,'Acoustic Pressure Amplitude')
@@ -508,10 +551,10 @@ hold all;
 ax2 = axes;
 im2 = imagesc(ax2, imrotate(squeeze(p(:,:,mz))*1e-6,90));
 im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
 colormap(ax1,'gray')
 colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+set([ax1,ax2],'Position',[.17 .11 .685 .815]);
 cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
 xlabel(cb2, '[MPa]');
 title(ax1,'Acoustic Pressure Amplitude')
@@ -523,7 +566,7 @@ p_out(idx1(1,1):idx1(1,2), idx1(2,1):idx1(2,2), idx1(3,1):idx1(3,2)) = ...
     p(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2));
 
 header.Filename=[]; header.Filemoddate=[]; header.Filesize=[]; header.raw=[];
-header.Datatype='double'; header.BitsPerPixel=32; 
+header.Datatype='double'; header.BitsPerPixel=32;
 niftiwrite(p_out, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_pressurefield.nii']), header);
 
 tmp_focusbin = p > 0.5*max_pressure;
@@ -537,7 +580,7 @@ niftiwrite(focal_vol_bin, fullfile(output_dir, [subj_id '_tussim_skull_3D_' tran
 
 %% Thermal Simulation
 if ~run_thermal_sim
-   return 
+   return
 end
 
 % convert the absorption coefficient to nepers/m
@@ -581,18 +624,18 @@ for nb = 1:num_bursts
     kdiff.Q = Q;
     % take time steps
     kdiff.takeTimeStep(round(on_time / dt), dt);
-    
+
     % store the current temperature field
     T1 = kdiff.T;
-    
+
     if max(T1(:)) > max(maxT1(:))
         maxT1 = T1;
     end
-    
+
     % turn off heat source and take time steps
     kdiff.Q = 0;
     kdiff.takeTimeStep(round(off_time / dt), dt);
-    
+
     % store the current temperature field
     T2 = kdiff.T;
 end
@@ -613,10 +656,10 @@ hold all;
 ax2 = axes;
 im2 = imagesc(ax2, imrotate(squeeze(maxT1(tx,:,:)),90));
 im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
 colormap(ax1,'gray')
 colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+set([ax1,ax2],'Position',[.17 .11 .685 .815]);
 cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
 xlabel(cb2, '°C');
 title(ax1,'Max. temperature')
@@ -629,10 +672,10 @@ hold all;
 ax2 = axes;
 im2 = imagesc(ax2, imrotate(squeeze(maxT1(:,ty,:)),90));
 im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
 colormap(ax1,'gray')
 colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+set([ax1,ax2],'Position',[.17 .11 .685 .815]);
 cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
 xlabel(cb2, '°C');
 title(ax1,'Max. temperature')
@@ -645,10 +688,10 @@ hold all;
 ax2 = axes;
 im2 = imagesc(ax2, imrotate(squeeze(maxT1(:,:,tz)),90));
 im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = []; 
+linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
 colormap(ax1,'gray')
 colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]); 
+set([ax1,ax2],'Position',[.17 .11 .685 .815]);
 cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
 xlabel(cb2, '°C');
 title(ax1,'Max. temperature')
@@ -720,4 +763,3 @@ title('Max. Temperature After Heating');
 colormap('turbo');
 scaleFig(2, 3);
 saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_thermalplots.jpg']));
-

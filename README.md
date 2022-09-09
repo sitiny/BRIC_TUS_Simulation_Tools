@@ -84,6 +84,8 @@ It is preferable that you provide a T1-weighted MR image that has had noise outs
 
 ## Citing this work
 
+If you use the functions in your own work, please consider citing the below paper and the relevant papers from the k-Wave toolbox.
+
 The simulations as implemented in these functions are described in the following paper.
 
 >    Siti N. Yaakub, Tristan White, Eric Kerfoot, Lennart Verhagen, Alexander Hammers, Elsa Fouragnan. Pseudo-CTs from T1-weighted MRI for planning of low-intensity transcranial focused ultrasound neuromodulation. (in preparation)
@@ -96,7 +98,6 @@ The simulation functions use the k-Wave Toolbox and kArray tools developed by Br
 >
 > E. S. Wise, B. T. Cox, J. Jaros, B. E. Treeby, "Representing arbitrary acoustic source and sensor distributions in Fourier collocation methods," J. Acoust. Soc. Am., 146 (1), pp. 278-288, 2019.
 
-If you use the functions in your own work, please consider citing the above paper and the k-Wave toolbox.
 
 ## Questions/feedback
 Feedback welcome at siti.yaakub@plymouth.ac.uk

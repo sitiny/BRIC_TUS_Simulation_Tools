@@ -1,4 +1,4 @@
-function [pressure,phase] = get_driving_params(focus_depth,transducer,isppa)
+function [pressure,phase] = get_driving_params(focus_depth,transducer)
 %GET_DRIVING_PARAMS Gets transducer pressure and relative phase of each
 %element for the Sonic Concepts CTX-series transducers.
 %   Currently, this function only works for the CTX-500 transducer for
@@ -24,6 +24,7 @@ function [pressure,phase] = get_driving_params(focus_depth,transducer,isppa)
 %   driving_params_Isppa20.mat
 % 
 % Author: Siti N. Yaakub, University of Plymouth, 7 Sep 2022
+isppa=20;
 
 if strcmp(transducer,'CTX500')
     if isppa==20

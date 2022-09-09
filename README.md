@@ -28,7 +28,7 @@ pressure = 51590;
 phase = [0,319,278,237];
 tussim_water_3D(transducer, pressure, phase)
 ```
-#### Input parameters:
+**Input parameters:**
 * `transducer`: CTX transducer type. This will determine the transducer central frequency and dimensions. Options are 'CTX500' or 'CTX250'.
 * `pressure`: Source pressure applied by transducer in Pa.
 * `phase`: 4-element array of phases of each transducer element in degrees for the focal depth required.

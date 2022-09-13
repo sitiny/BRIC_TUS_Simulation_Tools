@@ -464,7 +464,6 @@ disp(['Ispta = ' num2str(Ispta*1e3) ' mW/cm2'])
 disp(['Pressure at focus = ' num2str(p_focus * 1e-6) ' MPa']);
 disp(['Isppa at focus = ' num2str(isppa_focus) ' W/cm2'])
 disp(['-6dB focal volume = ' num2str(focal_vol) ' mm3'])
-disp(['-6dB max width = ' num2str(max(field_focal_size_6dB)*1e3) ' mm'])
 disp(' ')
 
 % save output file in output_dir
@@ -481,7 +480,7 @@ if ~exist(fullfile(output_dir, 'simulation_results.csv'), 'file')
     'PPW, CFL, Coordinates of max pressure, Distance from transducer rear surface (mm), ' ...
     'Max Pressure (MPa), MI, Isppa (W/cm2),' ...
     'Pressure at focus (MPa), Isppa at focus (W/cm2), ' ...
-    '-6dB focal volume (mm3), -6dB max width (mm)']);
+    '-6dB focal volume (mm3)']);
  fclose(fileID);
 end
 
@@ -489,10 +488,10 @@ end
 fileID = fopen(fullfile(output_dir, 'simulation_results.csv'),'a');
 fprintf(fileID,['%s, %d %d %d, %d %d %d, %d, ' ...
     '%f, %f, %d %d %d, %f, ' ...
-    '%f, %f, %f, %f, %f, %f, %f\n'], ...
+    '%f, %f, %f, %f, %f, %f\n'], ...
     subj_id, focus_coords, bowl_coords, focus_depth,  ...
     ppw, cfl, mx-shift_x, my-shift_y, mz-shift_z, norm(bowl_coords-[mx,my,mz])*dx*1e3, ...
-    max_pressure * 1e-6, MI, Isppa, p_focus * 1e-6, isppa_focus, focal_vol, max(field_focal_size_6dB)*1e3);
+    max_pressure * 1e-6, MI, Isppa, p_focus * 1e-6, isppa_focus, focal_vol);
 fclose(fileID);
 
 %%% Create Plots

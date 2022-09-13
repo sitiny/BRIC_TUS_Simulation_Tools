@@ -84,7 +84,7 @@ It is preferable that you provide a T1-weighted MR image that has had noise outs
 
 ## Citing this work
 
-If you use the functions in your own work, please consider citing the code (see citation in "About" panel), the paper below, and the relevant papers from the k-Wave toolbox.
+If you use the functions in your own work, please consider citing the code (see "Cite this repository" in the About panel on the top right of this page), the paper below, and the relevant papers from the k-Wave toolbox.
 
 The simulations as implemented in these functions are described in the following paper.
 

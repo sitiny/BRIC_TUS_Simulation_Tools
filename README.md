@@ -7,7 +7,7 @@ Currently, the simulation functions work for the NeuroFUS PRO CTX-500 and CTX-25
 
 ## Platform
 
-Tested on macOS Catalina (10.15.7), Windows (?) and Linux (?).
+Tested on macOS Catalina (10.15.7) and Monterey (12.5.1).
 
 
 ## Dependencies
@@ -84,7 +84,7 @@ It is preferable that you provide a T1-weighted MR image that has had noise outs
 
 ## Citing this work
 
-If you use the functions in your own work, please consider citing the below paper and the relevant papers from the k-Wave toolbox.
+If you use the functions in your own work, please consider citing the code (see citation in "About" panel), the paper below, and the relevant papers from the k-Wave toolbox.
 
 The simulations as implemented in these functions are described in the following paper.
 

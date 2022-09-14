@@ -31,7 +31,7 @@ if strcmp(transducer,'CTX500')
         load('driving_params_Isppa20.mat', 'driving_params');
         idx = find(driving_params.dist == focus_depth);
         pressure = driving_params.amp{idx}; % source pressure [Pa]
-        phase = driving_params.phase{idx,:}; % phase [rad]
+        phase = [driving_params.phase{idx,:}]; % phase [rad]
     else
         warning(['No saved values for this Isppa, please provide your ' ...
             'own as optional Name-Value input arguments to the main ' ...

@@ -88,7 +88,7 @@ If you use the functions in your own work, please consider citing the code (see 
 
 The simulations as implemented in these functions are described in the following paper.
 
->    Siti N. Yaakub, Tristan White, Eric Kerfoot, Lennart Verhagen, Alexander Hammers, Elsa Fouragnan. Pseudo-CTs from T1-weighted MRI for planning of low-intensity transcranial focused ultrasound neuromodulation. (in preparation)
+>    Siti N. Yaakub, Tristan A. White, Eric Kerfoot, Lennart Verhagen, Alexander Hammers, Elsa F. Fouragnan. Pseudo-CTs from T1-weighted MRI for planning of low-intensity transcranial focused ultrasound neuromodulation: an open-source tool. (in preparation)
 
 The simulation functions use the k-Wave Toolbox and kArray tools developed by Bradley Treeby and Ben Cox (University College London) and Jiri Jaros (Brno University of Technology). k-Wave and kArray tools can be downloaded for free from http://www.k-wave.org (see also Dependencies section) and described in the following papers. 
 

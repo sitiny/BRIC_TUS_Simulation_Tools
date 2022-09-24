@@ -84,11 +84,11 @@ It is preferable that you provide a T1-weighted MR image that has had noise outs
 
 ## Citing this work
 
-If you use the functions in your own work, please consider citing the code (see "Cite this repository" in the About panel on the top right of this page), the paper below, and the relevant papers from the k-Wave toolbox.
+If you use the functions in your own work, please consider citing this repository [![DOI](https://zenodo.org/badge/528941098.svg)](https://zenodo.org/badge/latestdoi/528941098), the paper below, and the relevant papers from the k-Wave toolbox.
 
 The simulations as implemented in these functions are described in the following paper.
 
->    Siti N. Yaakub, Tristan A. White, Eric Kerfoot, Lennart Verhagen, Alexander Hammers, Elsa F. Fouragnan. Pseudo-CTs from T1-weighted MRI for planning of low-intensity transcranial focused ultrasound neuromodulation: an open-source tool. (in preparation)
+>    Siti N. Yaakub, Tristan A. White, Eric Kerfoot, Lennart Verhagen, Alexander Hammers, Elsa F. Fouragnan. Pseudo-CTs from T1-weighted MRI for planning of low-intensity transcranial focused ultrasound neuromodulation: an open-source tool. (submitted to arXiv)
 
 The simulation functions use the k-Wave Toolbox and kArray tools developed by Bradley Treeby and Ben Cox (University College London) and Jiri Jaros (Brno University of Technology). k-Wave and kArray tools can be downloaded for free from http://www.k-wave.org (see also Dependencies section) and described in the following papers. 
 

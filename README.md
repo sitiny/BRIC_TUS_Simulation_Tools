@@ -38,7 +38,7 @@ This function will run the free-field (i.e. through water) acoustic simulation f
 You will need to know the pressure and phases of each element of the transducer. The phase of each element can be obtained from the NeuroFUS PRO Transducer Power Output (TPO) unit. The pressure will determine the free-field I<sub>SPPA</sub> for the simulation. Values for a focal depth of 62 mm are given in the example above.
 
 ### Transcranial acoustic simulations
-To run transcranial acoustic simulations on the example dataset provided, download the example data (available here: https://osf.io/e7sz9/) to the desired folder on your computer, then run the following in MATLAB, replacing `filepath` with the path to the folder where you saved the example data:
+To run transcranial acoustic simulations on the example dataset provided, download the example data (T1-weighted MRI: https://osf.io/download/xhne5 and pseudo-CT: https://osf.io/download/fytwk) to the desired folder on your computer, then run the following in MATLAB, replacing `filepath` with the path to the folder where you saved the example data:
 ```
 subj_id = 'sub-test01';
 t1_filename = fullfile(filepath, 'sub-test01_t1w.nii');

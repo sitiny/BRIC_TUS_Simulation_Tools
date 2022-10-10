@@ -179,7 +179,7 @@ title('Axial Pressure');
 
 % plot the pressure field 
 figure;
-imagesc(y_vec*1e3, x_vec*1e3, imrotate(p(:,:,Nz/2+1),90));
+imagesc(x_vec*1e3, y_vec*1e3, imrotate(p(:,:,Nz/2+1),90));
 colormap('turbo');
 xlabel('Axial Position [mm]');
 ylabel('Lateral Position [mm]');
@@ -262,7 +262,7 @@ end
 figure;
 % plot the acoustic pressure
 subplot(2, 2, 1);
-imagesc(kgrid.y_vec*1e3, kgrid.x_vec*1e3, imrotate(p(:,:,Nz/2+1) * 1e-6,90));
+imagesc(kgrid.x_vec*1e3, kgrid.y_vec*1e3, imrotate(p(:,:,Nz/2+1) * 1e-6,90));
 h = colorbar;
 xlabel(h, '[MPa]');
 ylabel('y-position [mm]');
@@ -272,7 +272,7 @@ title('Acoustic Pressure Amplitude');
 
 % plot the volume rate of heat deposition
 subplot(2, 2, 2);
-imagesc(kgrid.y_vec*1e3, kgrid.x_vec*1e3, imrotate(Q(:,:,Nz/2+1) * 1e-7,90));
+imagesc(kgrid.x_vec*1e3, kgrid.y_vec*1e3, imrotate(Q(:,:,Nz/2+1) * 1e-7,90));
 h = colorbar;
 xlabel(h, '[kW/cm^2]');
 ylabel('y-position [mm]');
@@ -282,7 +282,7 @@ title('Volume Rate Of Heat Deposition');
 
 % plot the temperature after heating
 subplot(2, 2, 3);
-imagesc(kgrid.y_vec*1e3, kgrid.x_vec*1e3, imrotate(T1(:,:,Nz/2+1),90));
+imagesc(kgrid.x_vec*1e3, kgrid.y_vec*1e3, imrotate(T1(:,:,Nz/2+1),90));
 h = colorbar;
 xlabel(h, '[degC]');
 ylabel('y-position [mm]');
@@ -292,7 +292,7 @@ title('Temperature After Heating');
 
 % plot the temperature after cooling
 subplot(2, 2, 4);
-imagesc(kgrid.x_vec * 1e3, kgrid.y_vec * 1e3, T2(:,:,Nz/2+1).');%, [37, 37.1]);
+imagesc(kgrid.x_vec * 1e3, kgrid.y_vec * 1e3, imrotate(T2(:,:,Nz/2+1),90));%, [37, 37.1]);
 h = colorbar;
 xlabel(h, '[degC]');
 ylabel('y-position [mm]');

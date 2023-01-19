@@ -1,6 +1,6 @@
 # BRIC TUS Simulation Tools
 
-MATLAB-based functions for running TUS acoustic simulations using T1-weighted MR and pseudo-CT images acquired at the Brain Research & Imaging Centre, University of Plymouth.
+MATLAB-based functions for running TUS acoustic simulations using T1-weighted MR and pseudo-CT images acquired at the Brain Research & Imaging Centre, University of Plymouth. To create pseudo-CT images, see https://github.com/sitiny/mr-to-pct.
 
 Currently, the simulation functions work for the NeuroFUS PRO CTX-500 and CTX-250 4-element transducers (https://brainbox-neuro.com/products/neurofus) only. The transcranial simulation function only supports input images with 1 mm isotropic voxels and the simulated pressure field is based on a free-field simulation at 20 W/cm<sup>2</sup> using the CTX-500 transducer. 
 

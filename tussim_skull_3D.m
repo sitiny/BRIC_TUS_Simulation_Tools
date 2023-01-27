@@ -345,6 +345,9 @@ sensor.record_start_index = kgrid.Nt - record_periods * ppp + 1;
 input_args = {'PMLSize', 10, 'PMLInside', true, 'PlotPML', true, ...
     'DisplayMask', source.p_mask};
 
+if ~exist(fullfile(output_dir), 'dir')
+    mkdir(output_dir)
+end
 switch run_cpp
     case 'matlab'
         % run C++ in Matlab

@@ -77,7 +77,7 @@ bx = 10; fx = 54;
 c0              = 1500;     % sound speed [m/s]
 rho0            = 1000;     % density [kg/m^3]
 alpha_power     = 1.43;     % Robertson et al., PMB 2017
-alpha_coeff     = 0.05;     % [dB/(MHz^y cm)] Fomenko et al., 2020
+alpha_coeff     = 0;        % [dB/(MHz^y cm)] close to 0 (Mueller et al., 2017), see also 0.05 Fomenko et al., 2020?
 
 % grid parameters
 axial_size      = 128e-3;    % total grid size in the axial dimension [m]

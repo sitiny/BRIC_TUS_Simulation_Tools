@@ -175,24 +175,27 @@ skull_model(skull_model < hu_min) = 0; % only use HU for skull acoustic properti
 skull_model(skull_model > hu_max) = hu_max;
 
 % pad images by 100 on each side
-tmp_model = zeros(size(skull_model,1)+200, size(skull_model,2)+200, size(skull_model,3)+200);
-tmp_model(101:size(skull_model,1)+100, ...
-    101:size(skull_model,2)+100, ...
-    101:size(skull_model,3)+100) = skull_model;
-tmp_focus = focus_coords+100;
+dx = header.PixelDimensions(1)*1e-3; % [m]
+padx = 100e-3/dx;
+tmp_model = zeros(size(skull_model,1)+padx*2, size(skull_model,2)+padx*2, size(skull_model,3)+padx*2);
+tmp_model(padx+1:size(skull_model,1)+padx, ...
+    padx+1:size(skull_model,2)+padx, ...
+    padx+1:size(skull_model,3)+padx) = skull_model;
+tmp_focus = focus_coords+padx;
 
 % centre on focus
 % grid size = 256x256x256, new focus coords = [128,128,128]
-shift_idx = [tmp_focus(1)-128+1,tmp_focus(1)+128;
-    tmp_focus(2)-128+1,tmp_focus(2)+128; ...
-    tmp_focus(3)-128+1,tmp_focus(3)+128];
+grid_max = 256e-3/dx;
+shift_idx = [tmp_focus(1)-grid_max/2+1,tmp_focus(1)+grid_max/2;
+    tmp_focus(2)-grid_max/2+1,tmp_focus(2)+grid_max/2; ...
+    tmp_focus(3)-grid_max/2+1,tmp_focus(3)+grid_max/2];
 model = tmp_model(shift_idx(1,1):shift_idx(1,2), ...
     shift_idx(2,1):shift_idx(2,2), ...
     shift_idx(3,1):shift_idx(3,2));
 
-shift_x = 128-focus_coords(1);
-shift_y = 128-focus_coords(2);
-shift_z = 128-focus_coords(3);
+shift_x = grid_max/2-focus_coords(1);
+shift_y = grid_max/2-focus_coords(2);
+shift_z = grid_max/2-focus_coords(3);
 
 bowl_coords     = bowl_coords + [shift_x, shift_y, shift_z];	% centre of rear surface of transducer [grid points]
 focus_coords    = focus_coords + [shift_x, shift_y, shift_z];  % point on the beam axis of the transducer [grid points]
@@ -201,14 +204,14 @@ focus_coords    = focus_coords + [shift_x, shift_y, shift_z];  % point on the be
 new_t1 = zeros(size(model));
 idx1 = zeros(3,2);
 for ii = 1:3
-    if shift_idx(ii,1)-100 < 0
+    if shift_idx(ii,1)-100e-3/dx < 0
         idx1(ii,1) = 1;
-    elseif shift_idx(ii,1)-100 > 0
-        idx1(ii,1) = shift_idx(ii,1)-100;
+    elseif shift_idx(ii,1)-100e-3/dx > 0
+        idx1(ii,1) = shift_idx(ii,1)-100e-3/dx;
     end
-    if shift_idx(ii,2)-100 <= size(input_ct,ii)
-        idx1(ii,2) = shift_idx(ii,2)-100;
-    elseif shift_idx(ii,2)-100 > size(input_ct,ii)
+    if shift_idx(ii,2)-100e-3/dx <= size(input_ct,ii)
+        idx1(ii,2) = shift_idx(ii,2)-100e-3/dx;
+    elseif shift_idx(ii,2)-100e-3/dx > size(input_ct,ii)
         idx1(ii,2) = size(input_ct,ii);
     end
 end

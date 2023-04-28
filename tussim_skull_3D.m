@@ -232,6 +232,17 @@ new_t1(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2)) = ...
 t1_img = new_t1;
 clear new_t1;
 
+% simulate on subset of grid
+model_orig = model;
+t1_orig = t1_img;
+model = model_orig(62:317,190:445,216:471);
+t1_img = t1_orig(62:317,190:445,216:471);
+
+bowl_coords_orig = bowl_coords;	
+focus_coords_orig = focus_coords;
+bowl_coords = bowl_coords_orig - [62, 190, 216];
+focus_coords = focus_coords_orig - [62, 190, 216];
+
 %%% Medium properties
 % assign medium properties for skull
 % derived from CT HU based on Marsac et al., 2017 & Bancel et al., 2021
@@ -500,88 +511,88 @@ fprintf(fileID,['%s, %d %d %d, %d %d %d, %d, ' ...
     max_pressure * 1e-6, MI, Isppa, p_focus * 1e-6, isppa_focus, focal_vol);
 fclose(fileID);
 
-%%% Create Plots
-figure;
-ax1 = axes;
-imagesc(ax1, imrotate(squeeze(t1_img(mx,:,:)),90), [50,500]);
-hold all;
-ax2 = axes;
-im2 = imagesc(ax2, imrotate(squeeze(p(mx,:,:))*1e-6,90));
-im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
-colormap(ax1,'gray')
-colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]);
-cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
-xlabel(cb2, '[MPa]');
-title(ax1,'Acoustic Pressure Amplitude')
-saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_sag.jpg']));
-
-figure;
-ax1 = axes;
-imagesc(ax1, imrotate(squeeze(t1_img(mx,:,:)),90), [50,500]);
-hold all;
-ax2 = axes;
-im2 = imagesc(ax2, imrotate(squeeze(p(mx,:,:)>(0.5*max_pressure))*1e-6,90));
-im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
-colormap(ax1,'gray')
-colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]);
-cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
-xlabel(cb2, '[MPa]');
-title(ax1,'50% Acoustic Pressure Amplitude')
-saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_sag_50%.jpg']));
-
-figure;
-ax1 = axes;
-imagesc(ax1, imrotate(squeeze(t1_img(:,my,:)),90), [50,500]);
-hold all;
-ax2 = axes;
-im2 = imagesc(ax2, imrotate(squeeze(p(:,my,:))*1e-6,90));
-im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
-colormap(ax1,'gray')
-colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]);
-cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
-xlabel(cb2, '[MPa]');
-title(ax1,'Acoustic Pressure Amplitude')
-saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_cor.jpg']));
-
-figure;
-ax1 = axes;
-imagesc(ax1, imrotate(squeeze(t1_img(:,:,mz)),90), [50,500]);
-hold all;
-ax2 = axes;
-im2 = imagesc(ax2, imrotate(squeeze(p(:,:,mz))*1e-6,90));
-im2.AlphaData = 0.5;
-linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
-colormap(ax1,'gray')
-colormap(ax2,'turbo')
-set([ax1,ax2],'Position',[.17 .11 .685 .815]);
-cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
-xlabel(cb2, '[MPa]');
-title(ax1,'Acoustic Pressure Amplitude')
-saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_ax.jpg']));
-
-%%% Save pressure field and -6dB volume as nifti file
-p_out = zeros(size(input_ct),'double');
-p_out(idx1(1,1):idx1(1,2), idx1(2,1):idx1(2,2), idx1(3,1):idx1(3,2)) = ...
-    p(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2));
-
-header.Filename=[]; header.Filemoddate=[]; header.Filesize=[]; header.raw=[];
-header.Datatype='double'; header.BitsPerPixel=32;
-niftiwrite(p_out, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_pressurefield.nii']), header);
-
-tmp_focusbin = p > 0.5*max_pressure;
-tmp_focusbin = int16(tmp_focusbin);
-focal_vol_bin = zeros(size(input_ct),'int16');
-focal_vol_bin(idx1(1,1):idx1(1,2), idx1(2,1):idx1(2,2), idx1(3,1):idx1(3,2)) = ...
-    tmp_focusbin(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2));
-clear tmp_focusbin;
-header.Datatype='int16'; header.BitsPerPixel=16;
-niftiwrite(focal_vol_bin, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_-6dBvolume.nii']), header);
+% %%% Create Plots
+% figure;
+% ax1 = axes;
+% imagesc(ax1, imrotate(squeeze(t1_img(mx,:,:)),90), [50,500]);
+% hold all;
+% ax2 = axes;
+% im2 = imagesc(ax2, imrotate(squeeze(p(mx,:,:))*1e-6,90));
+% im2.AlphaData = 0.5;
+% linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
+% colormap(ax1,'gray')
+% colormap(ax2,'turbo')
+% set([ax1,ax2],'Position',[.17 .11 .685 .815]);
+% cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
+% xlabel(cb2, '[MPa]');
+% title(ax1,'Acoustic Pressure Amplitude')
+% saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_sag.jpg']));
+% 
+% figure;
+% ax1 = axes;
+% imagesc(ax1, imrotate(squeeze(t1_img(mx,:,:)),90), [50,500]);
+% hold all;
+% ax2 = axes;
+% im2 = imagesc(ax2, imrotate(squeeze(p(mx,:,:)>(0.5*max_pressure))*1e-6,90));
+% im2.AlphaData = 0.5;
+% linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
+% colormap(ax1,'gray')
+% colormap(ax2,'turbo')
+% set([ax1,ax2],'Position',[.17 .11 .685 .815]);
+% cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
+% xlabel(cb2, '[MPa]');
+% title(ax1,'50% Acoustic Pressure Amplitude')
+% saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_sag_50%.jpg']));
+% 
+% figure;
+% ax1 = axes;
+% imagesc(ax1, imrotate(squeeze(t1_img(:,my,:)),90), [50,500]);
+% hold all;
+% ax2 = axes;
+% im2 = imagesc(ax2, imrotate(squeeze(p(:,my,:))*1e-6,90));
+% im2.AlphaData = 0.5;
+% linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
+% colormap(ax1,'gray')
+% colormap(ax2,'turbo')
+% set([ax1,ax2],'Position',[.17 .11 .685 .815]);
+% cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
+% xlabel(cb2, '[MPa]');
+% title(ax1,'Acoustic Pressure Amplitude')
+% saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_cor.jpg']));
+% 
+% figure;
+% ax1 = axes;
+% imagesc(ax1, imrotate(squeeze(t1_img(:,:,mz)),90), [50,500]);
+% hold all;
+% ax2 = axes;
+% im2 = imagesc(ax2, imrotate(squeeze(p(:,:,mz))*1e-6,90));
+% im2.AlphaData = 0.5;
+% linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
+% colormap(ax1,'gray')
+% colormap(ax2,'turbo')
+% set([ax1,ax2],'Position',[.17 .11 .685 .815]);
+% cb2 = colorbar(ax2,'Position',[.85 .11 .0275 .815]);
+% xlabel(cb2, '[MPa]');
+% title(ax1,'Acoustic Pressure Amplitude')
+% saveas(gcf, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_ax.jpg']));
+% 
+% %%% Save pressure field and -6dB volume as nifti file
+% p_out = zeros(size(input_ct),'double');
+% p_out(idx1(1,1):idx1(1,2), idx1(2,1):idx1(2,2), idx1(3,1):idx1(3,2)) = ...
+%     p(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2));
+% 
+% header.Filename=[]; header.Filemoddate=[]; header.Filesize=[]; header.raw=[];
+% header.Datatype='double'; header.BitsPerPixel=32;
+% niftiwrite(p_out, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_pressurefield.nii']), header);
+% 
+% tmp_focusbin = p > 0.5*max_pressure;
+% tmp_focusbin = int16(tmp_focusbin);
+% focal_vol_bin = zeros(size(input_ct),'int16');
+% focal_vol_bin(idx1(1,1):idx1(1,2), idx1(2,1):idx1(2,2), idx1(3,1):idx1(3,2)) = ...
+%     tmp_focusbin(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2));
+% clear tmp_focusbin;
+% header.Datatype='int16'; header.BitsPerPixel=16;
+% niftiwrite(focal_vol_bin, fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_-6dBvolume.nii']), header);
 
 %% Thermal Simulation
 if ~run_thermal_sim

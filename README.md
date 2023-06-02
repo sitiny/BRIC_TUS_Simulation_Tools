@@ -2,40 +2,37 @@
 
 MATLAB-based functions for running TUS acoustic simulations using T1-weighted MR and pseudo-CT images acquired at the Brain Research & Imaging Centre, University of Plymouth. To create pseudo-CT images, see https://github.com/sitiny/mr-to-pct.
 
-Currently, the simulation functions work for the NeuroFUS PRO CTX-500 and CTX-250 4-element transducers (https://brainbox-neuro.com/products/neurofus) only. The transcranial simulation function only supports input images with 1 mm isotropic voxels and the simulated pressure field is based on a free-field simulation at 20 W/cm<sup>2</sup> using the CTX-500 transducer. 
+Currently, the simulation functions work for the NeuroFUS PRO CTX-500 4-element transducer (https://brainbox-neuro.com/products/neurofus) only. The transcranial simulation function has been tested on input images with 1 mm isotropic voxels and the simulated pressure field is based on a free-field simulation at 20 W/cm<sup>2</sup> using the CTX-500-4 transducer. 
 
 
 ## Platform
 
-Tested on macOS Catalina (10.15.7) and Monterey (12.5.1).
+Tested on Ubuntu 22.04.2 LTS (Jammy Jellyfish).
 
 
 ## Dependencies
 
-* [k-Wave] (http://www.k-wave.org)
-* [kArray tools] (http://www.k-wave.org/downloads/kWaveArray_alpha_0.3.zip)
+* [k-Wave version 1.4] (http://www.k-wave.org)
 
 
 ## Instructions
 
-Clone or download functions and utils and add them and the k-Wave and kArray tools to your MATLAB path.
+Clone or download functions and utils and add them and the k-Wave v1.4 tools to your MATLAB path.
 
 ### Free-field acoustic simulations
 To run free-field acoustic simulations, run the following in MATLAB:
 ```
-transducer = 'CTX500';
 pressure = 51590;
 phase = [0,319,278,237];
 tussim_water_3D(transducer, pressure, phase)
 ```
 **Input parameters:**
-* `transducer`: CTX transducer type. This will determine the transducer central frequency and dimensions. Options are 'CTX500' or 'CTX250'.
 * `pressure`: Source pressure applied by transducer in Pa.
 * `phase`: 4-element array of phases of each transducer element in degrees for the focal depth required.
 
 This function will run the free-field (i.e. through water) acoustic simulation for the input parameters you provide. The function will produce plots of the simulated acoustic pressure field and display the maximum pressure [MPa], mechanical index (MI), distance from the rear surface of the transducer [mm], I<sub>SPPA</sub> [W/cm<sup>2</sup>], and I<sub>SPTA</sub> [mW/cm<sup>2</sup>]. 
 
-You will need to know the pressure and phases of each element of the transducer. The phase of each element can be obtained from the NeuroFUS PRO Transducer Power Output (TPO) unit. The pressure will determine the free-field I<sub>SPPA</sub> for the simulation. Values for a focal depth of 62 mm are given in the example above.
+You will need the pressure and phases of each element of the transducer. The phase of each element can be obtained from the NeuroFUS PRO Transducer Power Output (TPO) unit. The pressure will determine the free-field I<sub>SPPA</sub> for the simulation. Values for a focal depth of 62 mm are given in the example above.
 
 ### Transcranial acoustic simulations
 To run transcranial acoustic simulations on the example dataset provided, download the example data (T1-weighted MRI: https://osf.io/download/xhne5 and pseudo-CT: https://osf.io/download/fytwk) to the desired folder on your computer, then run the following in MATLAB, replacing `filepath` with the path to the folder where you saved the example data:

@@ -1,17 +1,14 @@
-subj_id         = 'SSTO0540';      % subject ID
-focus_coords    = [79, 139, 150]*2 + 1;    % point on the beam axis of the transducer [grid points]
-bowl_coords     = [14, 170, 194]*2 + 1;    % centre of rear surface of transducer [grid points]
-focus_depth     = 75;                   % to nearest mm
-transducer = 'CTX500';
+filepath = fullfile(pwd, '../');
+t1_filename = fullfile(filepath, 'sub-test01_t1w.nii');
+ct_filename = fullfile(filepath, 'sub-test01_pct.nii');
+output_dir = filepath;
+focus_coords_in = [99, 161, 202];  % point on the beam axis of the transducer [grid points]
+bowl_coords_in = [90, 193, 262];   % centre of rear surface of transducer [grid points]
+focus_depth = 60;               % to nearest mm
 
-base_dir = ['~/sub-' subj_id];
-output_dir = fullfile(base_dir, 'plan-nacc_ppw6');
-ct_filename = fullfile(base_dir, ['sub-' subj_id '_pCT_0.5mm.nii.gz']);
-t1_filename = fullfile(base_dir, ['sub-' subj_id '_T1w_0.5mm.nii.gz']);
+tussim_skull_3D(t1_filename, ct_filename, output_dir, ...
+    focus_coords_in, bowl_coords_in, focus_depth)
+tussim_skull_3D(t1_filename, ct_filename, output_dir, ...
+    focus_coords_in, bowl_coords_in, focus_depth, ...
+    'RunAcousticSim', true, 'RunThermalSim', true)
 
-pressure = 97360;
-phases = [0	275.3	190.6	105.8];
-
-%tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer);
-
-tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer, 'RunAcousticSim', true, 'SourcePressure', pressure, 'SourcePhase', phases);

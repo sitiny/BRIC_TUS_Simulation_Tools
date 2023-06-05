@@ -37,33 +37,29 @@ You will need the pressure and phases of each element of the transducer. The pha
 ### Transcranial acoustic simulations
 To run transcranial acoustic simulations on the example dataset provided, download the example data (T1-weighted MRI: https://osf.io/download/xhne5 and pseudo-CT: https://osf.io/download/fytwk) to the desired folder on your computer, then run the following in MATLAB, replacing `filepath` with the path to the folder where you saved the example data:
 ```
-subj_id = 'sub-test01';
 t1_filename = fullfile(filepath, 'sub-test01_t1w.nii');
 ct_filename = fullfile(filepath, 'sub-test01_pct.nii');
 output_dir = filepath;
-focus_coords = [99, 161, 202];
-bowl_coords = [90, 193, 262];
+focus_coords_in = [99, 161, 202];
+bowl_coords_in = [90, 193, 262];
 focus_depth = 60;
-transducer = 'CTX500';
-tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer)
+tussim_skull_3D(t1_filename, ct_filename, output_dir, focus_coords_in, bowl_coords_in, focus_depth)
 ```
 **Parameters:**
-* `subj_id`: ID of the subject you are running the simulation for.
 * `t1_filename`: Full file path to the T1-weighted MR image.
 * `ct_filename`: Full file path to the CT (or pseudo-CT) image.
 * `output_dir`: Full path to the directory where you want your simulation output to be saved.
 * `focus_coords`: 3-element array of voxel coordinates of the desired TUS focus. Add 1 if reading these off a viewer that uses zero-indexing (MATLAB indexing starts from 1).
 * `bowl_coords`: 3-element array of voxel coordinates of the centre of the transducer **base**. Add 1 if reading these off a viewer that uses zero-indexing (MATLAB indexing starts from 1).
 * `focus_depth`: Distance from transducer **face** to intended focus in mm, rounded to the nearest integer.
-* `transducer`: CTX transducer type. This will determine the transducer central frequency and dimensions. Options are 'CTX500' or 'CTX250'.
 
-This will load the example data and produce a 3D view of the skull model and transducer. The focus in this example is the dorsal anterior cingulate. 
+This will load the example data and produce a 3D view of the skull model and transducer. The focus in this example is the dorsal anterior cingulate. The visualisation is done at the default PPW = 3. We recommend doing transcranial simulations at PPW = 6.
 
-Run the function again with the acoustic simulation flag turned on:
-`tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer, 'RunAcousticSim', true)`
+Run the function again with the acoustic simulation flag turned on and PPW set to 6:
+`tussim_skull_3D(t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer, 'PPW', 6, 'RunAcousticSim', true)`
 
-This will produce plots of the simulated acoustic pressure field in each plane. The function will also display simulation parameters along with the coordinates of maximum pressure, distance from the rear surface of the transducer [mm], maximum pressure [MPa], mechanical index (MI), I<sub>SPPA</sub> [W/cm<sup>2</sup>], I<sub>SPTA</sub> [mW/cm<sup>2</sup>], pressure at intended focus [MPa], I<sub>SPPA</sub> at intended focus [W/cm<sup>2</sup>], and -6dB focal volume [mm<sup>3</sup>].
-The plots, a .csv file and a .mat file containing the simulation output will be saved in the `output_dir`.
+This will produce plots of the simulated acoustic pressure field in each plane. The function will also display simulation parameters along with the coordinates of maximum pressure, distance from the rear surface of the transducer [mm], maximum pressure [MPa], mechanical index (MI), I<sub>SPPA</sub> [W/cm<sup>2</sup>], pressure at intended focus [MPa], I<sub>SPPA</sub> at intended focus [W/cm<sup>2</sup>], and -6dB focal volume [mm<sup>3</sup>]. The -6dB focal volume and the pressure field will be output as nifti files for overlay on the T1-weighted MRI.
+The plots, output images and a .csv and .mat file containing the simulation output will be saved in the `output_dir`.
 
 Please see function help for optional input arguments (e.g. to run thermal simulation).
 
@@ -71,13 +67,12 @@ To use your own data with these scripts, please see "Preparing input files" sect
 
 
 ### Preparing input files
-Currently, the transcranial simulation function only supports input images with 1 mm isotropic voxels and the output is based on a free-field simulation at 20 W/cm<sup>2</sup> using the CTX-500 transducer. 
+The output is based on a free-field simulation at 20 W/cm<sup>2</sup> using the CTX-500-4 transducer. 
 
-You can provide your own source magnitude and transducer element phase information using the optional input.
+You can provide your own source magnitude and transducer element phase information using the optional input. This currently only works for 4 element transducers, but the script can be edited to support 2-element transducers.
 
-You will need to supply a co-registered T1-weighted MR image and CT (or pseudo-CT) image for use in the simulations. The image matrix size can be of any size and will be automatically adjusted in the function to allow space for placing your transducer within the simulation grid.
+You will need to supply a co-registered T1-weighted MR image and CT (or pseudo-CT) image for use in the simulations. Preferably, your input images should have 1 mm isotropic voxels. The image matrix size can be of any size and will be automatically adjusted in the function to allow space for placing your transducer within the simulation grid.
 
-It is preferable that you provide a T1-weighted MR image that has had noise outside the head masked out (e.g. the one used for pseudo-CT generation), so that the sensor is set to within this head mask. Otherwise, it will set the sensor to all voxels with intensity > 0 in the T1-weighted MR image. Alternatively, you can also use a brain extracted T1-weighted MRI, but this means you will not be able to simulate temperature rise at the skull interface when running the thermal simulation.
 
 ## Citing this work
 

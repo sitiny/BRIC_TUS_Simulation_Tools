@@ -578,7 +578,7 @@ if run_thermal_sim
     Q = alpha_np .* p.^2 ./ (medium.density .* medium.sound_speed);
     
     % downsample everything so thermal simulation runs faster
-    NTherm = [Nx,Ny,Nz]./scale_factor;
+    NTherm = round([Nx,Ny,Nz]./scale_factor);
     dxT= dx*scale_factor;
     kgridTherm = kWaveGrid(NTherm(1),dxT(1),NTherm(2),dxT(2),NTherm(3),dxT(3));
     

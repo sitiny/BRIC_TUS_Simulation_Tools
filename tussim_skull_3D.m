@@ -145,6 +145,7 @@ hu_max 	= 2000;	% maximum skull HU
 input_ct = niftiread(ct_filename);
 input_t1 = niftiread(t1_filename);
 header = niftiinfo(ct_filename);
+header_t1 = niftiinfo(t1_filename);
 
 % calculate the grid spacing based on PPW and F0
 dx = c_min / (ppw * freq); % in mm
@@ -378,7 +379,7 @@ if run_acoustic_sim
             sensor_data.p = h5read(output_filename, '/p');
             
             % delete temporary input and output files
-            system(['rm ' input_filename output_filename]);
+            system(['rm ' input_filename ' ' output_filename]);
     end
     
     %%% Calculate pressure
@@ -492,6 +493,7 @@ if run_acoustic_sim
     p_out(idx1(1,1):idx1(1,2), idx1(2,1):idx1(2,2), idx1(3,1):idx1(3,2)) = ...
         p(idx2(1,1):idx2(1,2), idx2(2,1):idx2(2,2), idx2(3,1):idx2(3,2));
     p_out = imresize3(p_out, 'cubic', 'Scale', 1./scale_factor);
+    header.ImageSize = size(p_out);
     header.Filename=[]; header.Filemoddate=[]; header.Filesize=[]; header.raw=[];
     header.Datatype='double'; header.BitsPerPixel=32;
     niftiwrite(p_out, fullfile(output_dir, 'pressure_field.nii'), header);

@@ -5,14 +5,14 @@ function tussim_skull_3D(t1_filename, ct_filename, output_dir, ...
 %
 % The transducer is modelled on the NeuroFUS CTX-500-4 with free-field Isppa
 % of 20 W/cm^2. If you would like the simulation for a different free-field
-% Isppa or a different 4-element transducer, you will have to provide your 
+% Isppa or a different 4-element transducer, you will have to provide your
 % own source pressure and phase as optional Name-Value paired input arguments.
-% 
-% The simulation grid is 256x256x256, with grid spacing determined by PPW 
-% (at recommended PPW = 6, grid spacing = 0.5x0.5x0.5mm^3). 
+%
+% The simulation grid is 256x256x256, with grid spacing determined by PPW
+% (at recommended PPW = 6, grid spacing = 0.5x0.5x0.5mm^3).
 %
 % You will need to supply a co-registered T1-weighted MR image and CT (or
-% pseudo-CT) image for use in the simulations. These images are recommended 
+% pseudo-CT) image for use in the simulations. These images are recommended
 % to be resampled to 1mm^3 isotropic voxels.
 %
 % Running the script without the acoustic or thermal simulation allows you
@@ -145,13 +145,12 @@ hu_max 	= 2000;	% maximum skull HU
 input_ct = niftiread(ct_filename);
 input_t1 = niftiread(t1_filename);
 header = niftiinfo(ct_filename);
-header_t1 = niftiinfo(t1_filename);
 
 % calculate the grid spacing based on PPW and F0
 dx = c_min / (ppw * freq); % in mm
 
 % resample input images to grid res (iso)
-scale_factor = header.PixelDimensions/(dx*1e3);
+scale_factor = round(header.PixelDimensions/(dx*1e3),2);
 ct_img = imresize3(input_ct, 'cubic', 'Scale', scale_factor);
 t1_img = imresize3(input_t1, 'cubic', 'Scale', scale_factor);
 
@@ -233,11 +232,11 @@ clear new_t1 tmp_model;
 % assign medium properties for skull
 % derived from CT HU based on Marsac et al., 2017 & Bancel et al., 2021
 medium.density = rho_min + (rho_max - rho_min) * ...
-                (model - 0) / (hu_max - 0);
+    (model - 0) / (hu_max - 0);
 medium.sound_speed = c_min + (c_max - c_min) * ...
-                    (medium.density - rho_min) / (rho_max - rho_min);
+    (medium.density - rho_min) / (rho_max - rho_min);
 medium.alpha_coeff = alpha_coeff_min + (alpha_coeff_max - alpha_coeff_min) * ...
-                    (1 - (model - hu_min) / (hu_max - hu_min)).^0.5;
+    (1 - (model - hu_min) / (hu_max - hu_min)).^0.5;
 
 % assign medium properties for non-skull (brain, soft tissue, modelled as water)
 medium.density(model == 0) = rho_min;
@@ -280,11 +279,11 @@ disp(['PPP = ' num2str(ppp)]);
 %%% Set source
 % set bowl position and orientation
 bowl_pos = [kgrid.x_vec(bowl_coords(1)), ...
-            kgrid.y_vec(bowl_coords(2)), ...
-            kgrid.z_vec(bowl_coords(3))];
+    kgrid.y_vec(bowl_coords(2)), ...
+    kgrid.z_vec(bowl_coords(3))];
 focus_pos = [kgrid.x_vec(focus_coords(1)), ...
-             kgrid.y_vec(focus_coords(2)), ...
-             kgrid.z_vec(focus_coords(3))];
+    kgrid.y_vec(focus_coords(2)), ...
+    kgrid.z_vec(focus_coords(3))];
 
 % create empty kWaveArray
 karray = kWaveArray('SinglePrecision', true);
@@ -324,8 +323,8 @@ if run_acoustic_sim
     
     %%% Set Sensor
     sensor.mask = ones(Nx, Ny, Nz);
-%     % set sensor mask within head mask: based on t1_img > 0
-%     sensor.mask(t1_img>0) = 1;
+    %     % set sensor mask within head mask: based on t1_img > 0
+    %     sensor.mask(t1_img>0) = 1;
     
     % record the pressure
     sensor.record = {'p'};
@@ -390,11 +389,11 @@ if run_acoustic_sim
     % reshape data
     % for whole grid mask:
     p = reshape(p, Nx, Ny, Nz);
-%     % for sensor mask within head mask: based on t1_img > 0
-%     tmp_p = p;
-%     p = zeros(size(model));
-%     p(t1_img>0) = tmp_p;
-%     clear tmp_p;
+    %     % for sensor mask within head mask: based on t1_img > 0
+    %     tmp_p = p;
+    %     p = zeros(size(model));
+    %     p(t1_img>0) = tmp_p;
+    %     clear tmp_p;
     
     % calculate acoustic intensities
     [max_pressure, idx] = max(p(:)); % [Pa]
@@ -406,13 +405,17 @@ if run_acoustic_sim
         Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2]
     end
     Isppa = Isppa * 1e-4; % [W/cm2]
-%     Ispta = Isppa * pulse_length * pulse_rep_freq; % [W/cm2]
+    %     Ispta = Isppa * pulse_length * pulse_rep_freq; % [W/cm2]
     
     % MI = max_pressure (in MPa) / sqrt freq (in MHz)
     MI = max_pressure * 1e-6 / sqrt(freq * 1e-6);
     
     % find -6dB focal volume
-    focal_vol = length(find(p > 0.5*max(p(:))));
+    % get largest connected component - probably the main focus
+    tmp_focal_vol = int16(p>0.5*max(p(:)));
+    cc = bwconncomp(tmp_focal_vol);
+    focal_vol = length(cc.PixelIdxList{1})*(dx*1e3)^3;
+    clear tmp_focal_vol cc;
     
     p_focus = p(focus_coords(1), focus_coords(2), focus_coords(3));
     isppa_focus = p_focus^2 / (2 * rho_min * c_min) * 1e-4;
@@ -498,13 +501,16 @@ if run_acoustic_sim
     header.Datatype='double'; header.BitsPerPixel=32;
     niftiwrite(p_out, fullfile(output_dir, 'pressure_field.nii'), header);
     
-    focal_vol_bin = p_out > 0.5*max_pressure;
-    focal_vol_bin = int16(focal_vol_bin);
+    focal_vol_bin = int16(p_out > 0.5*max_pressure);
+    cc = bwconncomp(focal_vol_bin);
+    focal_vol_lcc = int16(zeros(size(p_out)));
+    focal_vol_lcc(cc.PixelIdxList{1}) = 1;
     header.Datatype='int16'; header.BitsPerPixel=16;
-    niftiwrite(focal_vol_bin, fullfile(output_dir, 'focal_volume_bin.nii'), header);
+    niftiwrite(focal_vol_lcc, fullfile(output_dir, 'focal_volume_bin.nii'), header);
     
     % find max pressure point on original image
-    [max_pressure, idx] = max(p_out(:)); % [Pa]
+    [max_pressure, ~] = max(p_out(logical(focal_vol_lcc))); % [Pa]
+    idx = find(p_out==max_pressure);
     [mx, my, mz] = ind2sub(size(p_out), idx);
     
     %%% Summary
@@ -512,11 +518,9 @@ if run_acoustic_sim
     disp(['PPW = ' num2str(ppw)])
     disp(['CFL = ' num2str(cfl)])
     disp(['Coordinates of max pressure: [' num2str(mx) ', ' num2str(my) ', ' num2str(mz) ']'])
-    disp(['Distance from transducer rear surface: ' num2str(norm(bowl_coords_in-[mx,my,mz])*header.PixelDimensions(1)) ' mm'])
     disp(['Max Pressure = ' num2str(max_pressure * 1e-6) ' MPa'])
     disp(['MI = ' num2str(MI)])
     disp(['Isppa = ' num2str(Isppa) ' W/cm2'])
-%     disp(['Ispta = ' num2str(Ispta*1e3) ' mW/cm2'])
     disp(['Pressure at focus = ' num2str(p_focus * 1e-6) ' MPa']);
     disp(['Isppa at focus = ' num2str(isppa_focus) ' W/cm2'])
     disp(['-6dB focal volume = ' num2str(focal_vol) ' mm3'])
@@ -532,8 +536,8 @@ if run_acoustic_sim
         disp('Result file does not exist, creating file.')
         fileID = fopen(fullfile(output_dir, 'simulation_results.csv'), 'w' );
         fprintf(fileID, '%s\n', ...
-            ['Output directory, Focus coordinates, Transducer base coordinates, Focus depth, ' ...
-            'PPW, CFL, Coordinates of max pressure, Distance from transducer rear surface (mm), ' ...
+            ['Output directory, Focus coordinates, Bowl coordinates, Focus depth, ' ...
+            'PPW, CFL, PPP, Coordinates of max pressure, ' ...
             'Max Pressure (MPa), MI, Isppa (W/cm2),' ...
             'Pressure at focus (MPa), Isppa at focus (W/cm2), ' ...
             '-6dB focal volume (mm3)']);
@@ -543,10 +547,10 @@ if run_acoustic_sim
     % write values
     fileID = fopen(fullfile(output_dir, 'simulation_results.csv'),'a');
     fprintf(fileID,['%s, %d %d %d, %d %d %d, %d, ' ...
-        '%f, %f, %d %d %d, %f, ' ...
+        '%f, %f, %f, %d %d %d, ' ...
         '%f, %f, %f, %f, %f, %f\n'], ...
-        output_dir, focus_coords, bowl_coords, focus_depth,  ...
-        ppw, cfl, mx-shift_x, my-shift_y, mz-shift_z, norm(bowl_coords-[mx,my,mz])*dx*1e3, ...
+        output_dir, focus_coords_in, bowl_coords_in, focus_depth,  ...
+        ppw, cfl, ppp, mx, my, mz, ...
         max_pressure * 1e-6, MI, Isppa, p_focus * 1e-6, isppa_focus, focal_vol);
     fclose(fileID);
 end
@@ -614,11 +618,11 @@ if run_thermal_sim
     on_time  = pulse_dur;  % [s]
     off_time = pulse_rep_int - pulse_dur;  % [s]
     num_pulses = pulse_train_dur / pulse_rep_int;
-
+    
     % set time step size
     dt = on_time/10;
     
-%     step_count = 0;
+    %     step_count = 0;
     maxT1 = zeros(size(model));
     idxT = 1;
     timepoint(idxT) = 0;

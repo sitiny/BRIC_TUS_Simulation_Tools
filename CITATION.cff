@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "If you use this software, please cite either the paper (see README) and/or code:"
 authors:
 - family-names: "Yaakub"
   given-names: "Siti Nurbaya"

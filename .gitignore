@@ -6,6 +6,7 @@
 
 # OSX / *nix default autosave extension
 *.m~
+*.DS_Store
 
 # Compiled MEX binaries (all platforms)
 *.mex*
@@ -32,3 +33,4 @@ codegen/
 
 # Octave session info
 octave-workspace
+tussim_skull_3D_tusmrs.m

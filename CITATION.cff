@@ -5,7 +5,7 @@ authors:
   given-names: "Siti Nurbaya"
   orcid: "https://orcid.org/0000-0001-5084-1973"
 title: "BRIC TUS Simulation Tools"
-version: 1.0.0
-doi: 10.5281/zenodo.7110252
-date-released: 2022-09-24
+version: 2.0.0
+doi: 10.5281/zenodo.8027240 
+date-released: 2022-06-12
 url: "https://github.com/sitiny/BRIC_TUS_Simulation_Tools"

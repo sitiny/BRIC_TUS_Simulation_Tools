@@ -56,7 +56,7 @@ tussim_skull_3D(t1_filename, ct_filename, output_dir, focus_coords_in, bowl_coor
 This will load the example data and produce a 3D view of the skull model and transducer. The focus in this example is the dorsal anterior cingulate. The visualisation is done at the default PPW = 3. We recommend doing transcranial simulations at PPW = 6.
 
 Run the function again with the acoustic simulation flag turned on and PPW set to 6:
-`tussim_skull_3D(t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer, 'PPW', 6, 'RunAcousticSim', true)`
+`tussim_skull_3D(t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, 'PPW', 6, 'RunAcousticSim', true)`
 
 This will produce plots of the simulated acoustic pressure field in each plane. The function will also display simulation parameters along with the coordinates of maximum pressure, distance from the rear surface of the transducer [mm], maximum pressure [MPa], mechanical index (MI), I<sub>SPPA</sub> [W/cm<sup>2</sup>], pressure at intended focus [MPa], I<sub>SPPA</sub> at intended focus [W/cm<sup>2</sup>], and -6dB focal volume [mm<sup>3</sup>]. The -6dB focal volume and the pressure field will be output as nifti files for overlay on the T1-weighted MRI.
 The plots, output images and a .csv and .mat file containing the simulation output will be saved in the `output_dir`.

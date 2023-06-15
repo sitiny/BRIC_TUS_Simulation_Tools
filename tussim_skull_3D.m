@@ -564,7 +564,7 @@ if run_thermal_sim
     end
     if ~exist('pulse_rep_int', 'var')
         disp('Thermal simulation will be run with default pulse repetition frequency.')
-        pulse_rep_int = 5;     % pulse repetition frequency [Hz]
+        pulse_rep_int = 0.2;     % pulse repetition interval [s]
     end
     if ~exist('pulse_train_dur', 'var')
         disp('Thermal simulation will be run with default pulse train duration.')

@@ -617,7 +617,7 @@ if run_thermal_sim
     % set source on time and off time
     on_time  = pulse_dur;  % [s]
     off_time = pulse_rep_int - pulse_dur;  % [s]
-    num_pulses = pulse_train_dur / pulse_rep_int;
+    num_pulses = ceil(pulse_train_dur / pulse_rep_int);
     
     % set time step size
     dt = on_time/10;
@@ -655,8 +655,9 @@ if run_thermal_sim
     end
     toc
     [max_temp, idx_temp] = max(maxT1(:));
-    disp(['Max temperature rise = ' num2str(max_temp-sourceTherm.T0) ' °C'])
-    disp(['End max. temperature = ' num2str(max(T2(:))) ' °C'])
+    disp(['Max. temperature = ' num2str(max_temp) '°C'])
+    disp(['Max. temperature rise = ' num2str(max_temp-sourceTherm.T0) '°C'])
+    disp(['End max. temperature = ' num2str(max(T2(:))) '°C'])
     save(fullfile(output_dir, 'thermal_sim_output.mat'));
     
     %%% Create thermal plots
@@ -712,71 +713,4 @@ if run_thermal_sim
     xlabel(cb2, '°C');
     title(ax1,'Max. temperature')
     saveas(gcf, fullfile(output_dir, 'temperature_ax.jpg'));
-    
-    % plot at max pressure
-    figure;
-    % plot the volume rate of heat deposition (yz)
-    subplot(3, 2, 1);
-    imagesc(kgrid.y_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(Q(tx,:,:)*1e-7),90));
-    h = colorbar;
-    xlabel(h, '[kW/cm^2]');
-    ylabel('z-position [mm]');
-    xlabel('y-position [mm]');
-    axis image;
-    title('Volume Rate Of Heat Deposition');
-    
-    % plot the maximum temperature (yz)
-    subplot(3, 2, 2);
-    imagesc(kgrid.y_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(maxT1(tx,:,:)),90));
-    h = colorbar;
-    xlabel(h, '[°C]');
-    ylabel('z-position [mm]');
-    xlabel('y-position [mm]');
-    axis image;
-    title('Max. Temperature');
-    
-    % plot the volume rate of heat deposition (xz)
-    subplot(3, 2, 3);
-    imagesc(kgrid.x_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(Q(:,ty,:)*1e-7),90));
-    h = colorbar;
-    xlabel(h, '[kW/cm^2]');
-    ylabel('z-position [mm]');
-    xlabel('x-position [mm]');
-    axis image;
-    title('Volume Rate Of Heat Deposition');
-    
-    % plot the temperature after heating (xz)
-    subplot(3, 2, 4);
-    imagesc(kgrid.x_vec*1e3, kgrid.z_vec*1e3, imrotate(squeeze(maxT1(:,ty,:)),90));
-    h = colorbar;
-    xlabel(h, '[°C]');
-    ylabel('z-position [mm]');
-    xlabel('x-position [mm]');
-    axis image;
-    title('Max. Temperature After Heating');
-    
-    % plot the volume rate of heat deposition (xy)
-    subplot(3, 2, 5);
-    imagesc(kgrid.x_vec*1e3, kgrid.y_vec*1e3, imrotate(Q(:,:,tz)*1e-7,90));
-    h = colorbar;
-    xlabel(h, '[kW/cm^2]');
-    ylabel('y-position [mm]');
-    xlabel('x-position [mm]');
-    axis image;
-    title('Volume Rate Of Heat Deposition');
-    
-    % plot the temperature after heating (xy)
-    subplot(3, 2, 6);
-    imagesc(kgrid.x_vec*1e3, kgrid.y_vec*1e3, imrotate(maxT1(:,:,tz),90));
-    h = colorbar;
-    xlabel(h, '[°C]');
-    ylabel('y-position [mm]');
-    xlabel('x-position [mm]');
-    axis image;
-    title('Max. Temperature After Heating');
-    
-    % set colormap and enlarge figure window
-    colormap('turbo');
-    scaleFig(2, 3);
-    saveas(gcf, fullfile(output_dir, 'thermal_plots.jpg'));
 end

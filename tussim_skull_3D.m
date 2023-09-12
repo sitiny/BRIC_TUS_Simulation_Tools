@@ -412,7 +412,7 @@ if run_acoustic_sim
     
     % find -6dB focal volume
     % get largest connected component - probably the main focus
-    tmp_focal_vol = int16(p>0.5*max(p(:)));
+    tmp_focal_vol = int16(p>0.71*max(p(:)));
     cc = bwconncomp(tmp_focal_vol);
     focal_vol = length(cc.PixelIdxList{1})*(dx*1e3)^3;
     clear tmp_focal_vol cc;
@@ -485,7 +485,7 @@ if run_acoustic_sim
     imagesc(ax1, imrotate(squeeze(t1_img(mx,:,:)),90), [50,500]);
     hold all;
     ax2 = axes;
-    im2 = imagesc(ax2, imrotate(squeeze(p(mx,:,:)>(0.5*max_pressure))*1e-6,90));
+    im2 = imagesc(ax2, imrotate(squeeze(p(mx,:,:)>(0.71*max_pressure))*1e-6,90));
     im2.AlphaData = 0.5;
     linkaxes([ax1,ax2]); ax2.Visible = 'off'; ax2.XTick = []; ax2.YTick = [];
     colormap(ax1,'gray')
@@ -538,7 +538,7 @@ if run_acoustic_sim
     header.Datatype='double'; header.BitsPerPixel=32;
     niftiwrite(p_out, fullfile(output_dir, 'pressure_field.nii'), header);
     
-    focal_vol_bin = int16(p_out > 0.5*max_pressure);
+    focal_vol_bin = int16(p_out > 0.71*max_pressure);
     cc = bwconncomp(focal_vol_bin);
     focal_vol_lcc = int16(zeros(size(p_out)));
     focal_vol_lcc(cc.PixelIdxList{1}) = 1;

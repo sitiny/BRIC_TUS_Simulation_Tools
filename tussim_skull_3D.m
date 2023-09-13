@@ -434,8 +434,11 @@ if run_acoustic_sim
             warning(['It is likely that the maximum pressure is at the skull interface. ' ...
                 'Attempting to adjust search for maximum pressure along the trajectory... ' ...
                 'I cannot guarantee this will be correct... ' ...
-                'Please check output!'])
+                'Saving .mat file, please check output!'])
             
+            clear source sensor_data;
+            save(fullfile(output_dir, 'acoustic_sim_output.mat'));
+    
             u = ([mx,my,mz]-focus_coords)/norm([mx,my,mz]-focus_coords);
             search_rad = 10;
             search_start = [mx,my,mz] - search_rad*u;

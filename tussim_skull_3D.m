@@ -399,11 +399,12 @@ if run_acoustic_sim
     [max_pressure, idx] = max(p(:)); % [Pa]
     [mx, my, mz] = ind2sub(size(p), idx);
     
-    if model(mx, my, mz) > 1
-        Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))); % [W/m2]
-    elseif model(mx, my, mz) == 0
-        Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2]
-    end
+%     if model(mx, my, mz) > 1
+%         Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))); % [W/m2]
+%     elseif model(mx, my, mz) == 0
+%         Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2]
+%     end
+    Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2] assume this is in soft tissue
     Isppa = Isppa * 1e-4; % [W/cm2]
     %     Ispta = Isppa * pulse_length * pulse_rep_freq; % [W/cm2]
     
@@ -444,11 +445,12 @@ if run_acoustic_sim
         my = search_start(2) - my;
         mz = search_start(3) - mz;
         
-        if model(mx, my, mz) > 1
-            Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))); % [W/m2]
-        elseif model(mx, my, mz) == 0
-            Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2]
-        end
+%         if model(mx, my, mz) > 1
+%             Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))); % [W/m2]
+%         elseif model(mx, my, mz) == 0
+%             Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2]
+%         end
+        Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2] assume this is in soft tissue
         Isppa = Isppa * 1e-4; % [W/cm2]
         %     Ispta = Isppa * pulse_length * pulse_rep_freq; % [W/cm2]
         

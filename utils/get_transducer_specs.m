@@ -6,7 +6,7 @@ function [roc,diameters,frequency] = get_transducer_specs(transducer)
 %   [roc,diameters,frequency] = get_transducer_specs('CTX500')
 %
 % Inputs:
-%   transducer: Options are 'CTX500', 'CTX560' or 'CTX250'
+%   transducer: Options are 'CTX500' or 'CTX250'
 %
 % Outputs:
 %   roc:        Transducer radius of curvature [m]
@@ -25,18 +25,13 @@ switch transducer
         % aperture diameters of the elements given an inner, outer pairs [m]
         diameters = [0 1.28; 1.3 1.802; 1.82 2.19; 2.208 2.52].' * 0.0254;
         frequency = 500e3;
-    case 'CTX560'
-        roc = 63.2e-3;	% bowl radius of curvature [m]
-        % aperture diameters of the elements given an inner, outer pairs [m]
-        diameters = [0 1.28; 1.3 1.802; 1.82 2.19; 2.208 2.52].' * 0.0254;
-        frequency = 560e3;
     case 'CTX250'
         roc = 63.2e-3;	% bowl radius of curvature [m]
         % aperture diameters of the elements given an inner, outer pairs [m]
         diameters = [0 1.274; 1.296 1.794; 1.816 2.186; 2.206 2.52].' * 0.0254;
         frequency = 250e3;
     otherwise
-        error("Unknown transducer type! Options are 'CTX500', 'CTX560' or 'CTX250'.")
+        error("Unknown transducer type! Options are 'CTX500' or 'CTX250'.")
 end
 
 end

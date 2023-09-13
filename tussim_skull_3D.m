@@ -423,7 +423,7 @@ if run_acoustic_sim
     
     %%% Check whether max pressure point is >5 mm away from focus
     if norm(focus_coords-[mx,my,mz])*dx*1e3 > 5
-        warning(['Maximum pressure point is more than 10 mm away from the intended focus. ' ...
+        warning(['Maximum pressure point is more than 5 mm away from the intended focus. ' ...
             'Attempting to check whether max pressure point is at the skull interface.'])
         
         % move by 2 voxels towards focus, check if in skull

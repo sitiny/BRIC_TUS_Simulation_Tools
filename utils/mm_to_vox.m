@@ -1,7 +1,7 @@
 function vox_coords = mm_to_vox(nifti_img, mm_coords)
 % takes a 3x1 matrix of mm coordinates and converts to voxel coordinates
 % requires nifti image file for affine transform
-% returns a 3x1 matrix of voxel coordinates
+% returns a 3x1 matrix of voxel coordinates (round values as needed)
 
 header=niftiinfo(nifti_img);
 affine=header.Transform.T';

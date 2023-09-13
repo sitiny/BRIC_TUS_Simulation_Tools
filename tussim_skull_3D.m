@@ -425,44 +425,44 @@ if run_acoustic_sim
     if norm(focus_coords-[mx,my,mz])*dx*1e3 > 5
         warning(['Maximum pressure point is more than 5 mm away from the intended focus. ' ...
             'It is likely that the maximum pressure is at the skull interface. ' ...
-            'Attempting to adjust search for maximum pressure along the trajectory... ' ...
-            'I cannot guarantee this will be correct... ' ...
+%             'Attempting to adjust search for maximum pressure along the trajectory... ' ...
+%             'I cannot guarantee this will be correct... ' ...
             'Please check output!'])
         
-        u = ([mx,my,mz]-focus_coords)/norm([mx,my,mz]-focus_coords);
-        search_rad = 10;
-        search_start = [mx,my,mz] - search_rad*u;
-        search_start = round(search_start);
-        
-        %     zz = mz-10;
-        %     tmp=p(:,:,1:zz);
-        tmp=p(search_start(1):end,1:search_start(2),1:search_start(3));
-        
-        [max_pressure, idx] = max(tmp(:)); % [Pa]
-        [mx, my, mz] = ind2sub(size(tmp), idx);
-        
-        mx = search_start(1) + mx;
-        my = search_start(2) - my;
-        mz = search_start(3) - mz;
-        
-%         if model(mx, my, mz) > 1
-%             Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))); % [W/m2]
-%         elseif model(mx, my, mz) == 0
-%             Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2]
-%         end
-        Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2] assume this is in soft tissue
-        Isppa = Isppa * 1e-4; % [W/cm2]
-        %     Ispta = Isppa * pulse_length * pulse_rep_freq; % [W/cm2]
-        
-        % MI = max_pressure (in MPa) / sqrt freq (in MHz)
-        MI = max_pressure * 1e-6 / sqrt(freq * 1e-6);
-        
-        % find -6dB focal volume
-        % get largest connected component - probably the main focus
-        tmp_focal_vol = int16(p>0.71*max_pressure);
-        cc = bwconncomp(tmp_focal_vol);
-        focal_vol = length(cc.PixelIdxList{1})*(dx*1e3)^3;
-        clear tmp_focal_vol cc;
+%         u = ([mx,my,mz]-focus_coords)/norm([mx,my,mz]-focus_coords);
+%         search_rad = 10;
+%         search_start = [mx,my,mz] - search_rad*u;
+%         search_start = round(search_start);
+%         
+%         %     zz = mz-10;
+%         %     tmp=p(:,:,1:zz);
+%         tmp=p(search_start(1):end,1:search_start(2),1:search_start(3));
+%         
+%         [max_pressure, idx] = max(tmp(:)); % [Pa]
+%         [mx, my, mz] = ind2sub(size(tmp), idx);
+%         
+%         mx = search_start(1) + mx;
+%         my = search_start(2) - my;
+%         mz = search_start(3) - mz;
+%         
+% %         if model(mx, my, mz) > 1
+% %             Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))); % [W/m2]
+% %         elseif model(mx, my, mz) == 0
+% %             Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2]
+% %         end
+%         Isppa = max_pressure^2 / (2 * rho_min * c_min); % [W/m2] assume this is in soft tissue
+%         Isppa = Isppa * 1e-4; % [W/cm2]
+%         %     Ispta = Isppa * pulse_length * pulse_rep_freq; % [W/cm2]
+%         
+%         % MI = max_pressure (in MPa) / sqrt freq (in MHz)
+%         MI = max_pressure * 1e-6 / sqrt(freq * 1e-6);
+%         
+%         % find -6dB focal volume
+%         % get largest connected component - probably the main focus
+%         tmp_focal_vol = int16(p>0.71*max_pressure);
+%         cc = bwconncomp(tmp_focal_vol);
+%         focal_vol = length(cc.PixelIdxList{1})*(dx*1e3)^3;
+%         clear tmp_focal_vol cc;
     
     end
     

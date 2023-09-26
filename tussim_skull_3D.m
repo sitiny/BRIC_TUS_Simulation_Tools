@@ -294,7 +294,7 @@ karray.addAnnularArray(bowl_pos, source_roc, diameters, focus_pos)
 % assign binary mask
 source.p_mask = karray.getArrayBinaryMask(kgrid);
 
-if ~run_acoustic_sim
+if ~run_acoustic_sim && ~run_thermal_sim
     % visualise transducer (check it is within the grid)
     model_mask = model;
     model_mask(model_mask>0)=1;

@@ -578,9 +578,10 @@ if run_acoustic_sim
     
     % Write summary to spreadsheet
     % create result file if it does not exist and write header
-    if ~exist(fullfile(output_dir, 'simulation_results.csv'), 'file')
+    sim_output_filename = fullfile(output_dir, 'simulation_results.csv');
+    if ~exist(sim_output_filename, 'file')
         disp('Result file does not exist, creating file.')
-        fileID = fopen(fullfile(output_dir, 'simulation_results.csv'), 'w' );
+        fileID = fopen(sim_output_filename, 'w' );
         fprintf(fileID, '%s\n', ...
             ['Output directory,Focus coordinates,Bowl coordinates,Focus depth,' ...
             'PPW,CFL,PPP,Coordinates of max pressure,' ...
@@ -591,7 +592,7 @@ if run_acoustic_sim
     end
     
     % write values
-    fileID = fopen(fullfile(output_dir, 'simulation_results.csv'),'a');
+    fileID = fopen(sim_output_filename,'a');
     fprintf(fileID,['%s,%d %d %d,%d %d %d,%d,' ...
         '%f,%f,%f,%d %d %d,' ...
         '%f,%f,%f,%f,%f,%f\n'], ...
@@ -705,6 +706,23 @@ if run_thermal_sim
     disp(['Max. temperature rise = ' num2str(max_temp-sourceTherm.T0) '°C'])
     disp(['End max. temperature = ' num2str(max(T2(:))) '°C'])
     save(fullfile(output_dir, 'thermal_sim_output.mat'));
+    
+    % Write summary to spreadsheet
+    % create result file if it does not exist and write header
+    therm_output_filename = fullfile(output_dir, 'thermal_simulation_results.csv');
+    if ~exist(therm_output_filename, 'file')
+        disp('Result file does not exist, creating file.')
+        fileID = fopen(therm_output_filename, 'w' );
+        fprintf(fileID, '%s\n', ...
+            'Output directory,Max. temp.,Max. temp. rise,End max. temp');
+        fclose(fileID);
+    end
+    
+    % write values
+    fileID = fopen(therm_output_filename,'a');
+    fprintf(fileID,'%s,%f,%f,%f\n', ...
+        output_dir, max_temp, max_temp-sourceTherm.T0, max(T2(:)));
+    fclose(fileID);    
     
     %%% Create thermal plots
     [tx, ty, tz] = ind2sub(size(maxT1), idx_temp); % plot at max T coords

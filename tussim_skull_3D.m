@@ -82,6 +82,7 @@ run_acoustic_sim = false;
 run_thermal_sim = false;
 run_cpp = 'linux_system';
 ppw = 3;
+transducer = 'CTX500';
 
 % replace with user-defined inputs, if given
 if ~isempty(varargin)
@@ -105,6 +106,8 @@ if ~isempty(varargin)
                 phase = varargin{arg_idx+1};
             case 'RunCppCode'
                 run_cpp = varargin{arg_idx+1};
+            case 'transducer'
+                transducer = varargin{arg_idx+1};
             otherwise
                 error('Unknown optional input.');
         end
@@ -112,10 +115,10 @@ if ~isempty(varargin)
 end
 
 % specify transducer
-[source_roc,diameters,freq] = get_transducer_specs('CTX500');
+[source_roc,diameters,freq] = get_transducer_specs(transducer);
 if ~exist('pressure', 'var') || ~exist('phase', 'var')
     disp('Source pressure and phases not set, using default values for focus depth.')
-    [pressure,phase] = get_driving_params(focus_depth,'CTX500');
+    [pressure,phase] = get_driving_params(focus_depth,transducer);
 end
 
 %% Simulation parameters

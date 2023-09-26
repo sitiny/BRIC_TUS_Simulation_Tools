@@ -667,7 +667,7 @@ if run_thermal_sim
     num_pulses = ceil(pulse_train_dur / pulse_rep_int);
     
     % set time step size
-    dt = on_time/10;
+    dt = on_time/4;
     
     %     step_count = 0;
     maxT1 = zeros(size(model));
